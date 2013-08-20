@@ -1,4 +1,4 @@
 Middleware
 ==========
 
-A rifi middleware
+这是RFID中间件的开发版本，目前只写了一个adapter。
