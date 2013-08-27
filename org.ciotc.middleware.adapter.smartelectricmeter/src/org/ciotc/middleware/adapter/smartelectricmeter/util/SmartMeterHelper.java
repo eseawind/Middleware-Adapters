@@ -37,7 +37,7 @@ public class SmartMeterHelper extends DefaultHandler{
     
 	@Override
 	public void startDocument() throws SAXException {
-		System.out.println("start document");
+		//System.out.println("start document");
 		
 	}
 
@@ -60,6 +60,7 @@ public class SmartMeterHelper extends DefaultHandler{
 			e.printStackTrace();
 		}
 		return smh.getMeters();
+		
 	}
 	public List<SmartMeter> getMeters(){
 		return meters;
@@ -67,7 +68,7 @@ public class SmartMeterHelper extends DefaultHandler{
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException { 
-		System.out.println(qName + "," + attributes.getValue(0) + "," + attributes.getValue(1));
+		 //System.out.println(qName + "," + attributes.getValue(0) + "," + attributes.getValue(1));
 		 if(qName.equalsIgnoreCase("meterrealtimedata")){
 			 meter = new SmartMeter();
 			 meter.setMeterID(attributes.getValue(0));
@@ -83,7 +84,7 @@ public class SmartMeterHelper extends DefaultHandler{
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
-		System.out.println("End element:" + qName);
+		//System.out.println("End element:" + qName);
 		if(qName.equalsIgnoreCase("meterrealtimedata")){
 			meters.add(meter);
 			meter = null;
@@ -98,10 +99,9 @@ public class SmartMeterHelper extends DefaultHandler{
 	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
-		System.out.println("in char:" + new String(ch,start,length));
-			//float value = Float.parseFloat(new String(ch,start,length));
+		//System.out.println("in char:" + new String(ch,start,length));
 		if(usage){
-			System.out.println("Usage in char:" + new String(ch,start,length));
+			//System.out.println("Usage in char:" + new String(ch,start,length));
 			usageOrder ++;
 			String value = new String(ch,start,length);
 			if(usageOrder == 1){
@@ -113,7 +113,6 @@ public class SmartMeterHelper extends DefaultHandler{
 			}else {
 				meter.setValue4(value);
 			}
-			//meter.setValue1(Float.parseFloat(new String(ch,start,length)));
 		}
 		
 	}
