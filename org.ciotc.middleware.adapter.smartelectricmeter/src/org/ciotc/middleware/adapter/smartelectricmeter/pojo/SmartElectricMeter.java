@@ -5,7 +5,7 @@
  * org.ciotc.middleware.adapter.smartelectricmeter
  *
  */
-package org.ciotc.middleware.adapter.smartelectricmeter.bean;
+package org.ciotc.middleware.adapter.smartelectricmeter.pojo;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

@@ -26,8 +26,8 @@ import javax.xml.bind.Marshaller;
 
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
-import org.ciotc.middleware.adapter.smartelectricmeter.bean.SmartElectricMeter;
-import org.ciotc.middleware.adapter.smartelectricmeter.bean.SmartElectricMeterList;
+import org.ciotc.middleware.adapter.smartelectricmeter.pojo.SmartElectricMeter;
+import org.ciotc.middleware.adapter.smartelectricmeter.pojo.SmartElectricMeterList;
 import org.ciotc.middleware.adapter.smartelectricmeter.util.SmartMeterHelper;
 import org.ciotc.middleware.notification.MessageDto;
 import org.ciotc.middleware.sensors.AbstractSensor;

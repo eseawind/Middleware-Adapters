@@ -1,4 +1,4 @@
-package org.ciotc.middleware.adapter.smartelectricmeter.bean;
+package org.ciotc.middleware.adapter.smartelectricmeter.pojo;
 
 import java.util.ArrayList;
 import java.util.List;

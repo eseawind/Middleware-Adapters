@@ -41,7 +41,7 @@ public class MinaSocketUDPHandler extends IoHandlerAdapter {
 		logger.info("...receiving msg...");
 		IoBuffer ib = (IoBuffer)message;
 		String data = ib.getHexDump().replaceAll(" ", "");
-		System.out.println(ib.getHexDump());
+		logger.debug(ib.getHexDump());
 		
 		Integer type = Integer.parseInt(data.substring(10, 14), 16);
 		
