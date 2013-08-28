@@ -2,7 +2,7 @@
  * PM25TimerTask.java
  * ZhangMin.name - zhangmin@zhangmin.name
  * org.ciotc.middleware.adapter.pm25
- * 2013Äê8ÔÂ20ÈÕ
+ * 2013ï¿½ï¿½8ï¿½ï¿½20ï¿½ï¿½
  */
 package org.ciotc.middleware.adapter.pm25;
 
@@ -70,6 +70,7 @@ public class PM25TimerTask extends TimerTask{
 		MessageDto msgDto = new MessageDto();
 		msgDto.setReaderID(sensor.getID());
 		msgDto.setSequence("0");
+		//TODO change pm25 value to xml format
 		msgDto.setXmlData(pm25.toString());
 		
 		sensor.send(msgDto);
