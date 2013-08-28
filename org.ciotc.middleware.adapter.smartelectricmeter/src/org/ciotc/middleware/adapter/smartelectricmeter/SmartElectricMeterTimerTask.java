@@ -27,7 +27,7 @@ import javax.xml.bind.Marshaller;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 import org.ciotc.middleware.adapter.smartelectricmeter.bean.SmartElectricMeter;
-import org.ciotc.middleware.adapter.smartelectricmeter.bean.SmartMeterList;
+import org.ciotc.middleware.adapter.smartelectricmeter.bean.SmartElectricMeterList;
 import org.ciotc.middleware.adapter.smartelectricmeter.util.SmartMeterHelper;
 import org.ciotc.middleware.notification.MessageDto;
 import org.ciotc.middleware.sensors.AbstractSensor;
@@ -71,7 +71,7 @@ public class SmartElectricMeterTimerTask extends TimerTask{
 		
 		//mock
 		SmartMeterHelper smh = new SmartMeterHelper();
-		SmartMeterList meters = new SmartMeterList();
+		SmartElectricMeterList meters = new SmartElectricMeterList();
 		String meterData = "";
 		InputStream is = smh.getClass().getClassLoader().getResourceAsStream("data.xml");
 		meters = smh.getMeters(is);
@@ -82,7 +82,7 @@ public class SmartElectricMeterTimerTask extends TimerTask{
 		}
 		
 		try {
-			meterData = objToXml(meters,SmartMeterList.class);
+			meterData = objToXml(meters,SmartElectricMeterList.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -17,7 +17,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.ciotc.middleware.adapter.smartelectricmeter.bean.SmartElectricMeter;
-import org.ciotc.middleware.adapter.smartelectricmeter.bean.SmartMeterList;
+import org.ciotc.middleware.adapter.smartelectricmeter.bean.SmartElectricMeterList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -42,7 +42,7 @@ public class SmartMeterHelper extends DefaultHandler{
 		
 	}
 
-	public SmartMeterList getMeters(InputStream is){
+	public SmartElectricMeterList getMeters(InputStream is){
 		SAXParserFactory factory = null;
 		SAXParser parser = null;
 		SmartMeterHelper smh = new SmartMeterHelper();
@@ -63,8 +63,8 @@ public class SmartMeterHelper extends DefaultHandler{
 		return smh.getMeters();
 		
 	}
-	public SmartMeterList getMeters(){
-		SmartMeterList sml = new SmartMeterList();
+	public SmartElectricMeterList getMeters(){
+		SmartElectricMeterList sml = new SmartElectricMeterList();
 		sml.setSmartElectricMeter(this.meters);
 		return sml;
 	}
@@ -126,7 +126,7 @@ public class SmartMeterHelper extends DefaultHandler{
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		SmartMeterHelper smh = new SmartMeterHelper();
-		SmartMeterList meters = new SmartMeterList();
+		SmartElectricMeterList meters = new SmartElectricMeterList();
 		InputStream is = smh.getClass().getClassLoader().getResourceAsStream("data.xml");
 		meters = smh.getMeters(is);
 		System.out.println("===Print Result===");

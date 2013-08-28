@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "SmartMeterList", namespace = "http://ciotc.org/wsn/Sensor/msg", propOrder = {
     "SmartMeterData"
 })
-public class SmartMeterList {
+public class SmartElectricMeterList {
 
     @XmlElement(required = true,namespace=NameSpace.SMSG_URI)
     protected ArrayList<SmartElectricMeter> smartElectricMeter;
