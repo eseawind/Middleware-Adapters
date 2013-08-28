@@ -40,7 +40,7 @@ public class SmartElectricMeterSensor extends AbstractSensor< SmartElectricMeter
 	private volatile String url = "http://192.168.0.195/MeterDataCache.xml";
 	private Integer delayTime = Integer.valueOf(10);
 	private Integer intervalTime = Integer.valueOf(60);
-	private String displayName  = "SmartElectricMeter Sensor";
+	private String displayName  = "SmartElectricMeterSensor";
 	
 	public static final MBeanInfo mbeaninfo;
 	

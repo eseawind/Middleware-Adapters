@@ -1,4 +1,4 @@
-package org.ciotc.middleware.adapter.smartelectricmeter.bean;
+package org.ciotc.middleware.adapter.smartelectricmeter.util;
 
 public class NameSpace {
 

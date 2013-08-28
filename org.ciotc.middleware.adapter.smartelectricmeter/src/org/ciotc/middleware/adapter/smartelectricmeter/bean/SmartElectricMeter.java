@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.ciotc.middleware.adapter.smartelectricmeter.util.NameSpace;
+
 
 
 /**
@@ -24,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "SmartElectricMeterData", namespace = "http://ciotc.org/wsn/Sensor/msg", propOrder = {
 	"meterID",
 	"meterName",
-	"usage1"
+	"usage"
 })
 public class SmartElectricMeter {
 	
@@ -35,11 +37,8 @@ public class SmartElectricMeter {
 	private String meterName;
 	
 	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
-	private String usage1;
+	private String usage;
 	
-	private String usage2;
-	private String usage3;
-	private String usage4;
 	public String getMeterID() {
 		return meterID;
 	}
@@ -52,29 +51,12 @@ public class SmartElectricMeter {
 	public void setMeterName(String meterName) {
 		this.meterName = meterName;
 	}
-	public String getValue1() {
-		return usage1;
+	public String getUsage() {
+		return usage;
 	}
-	public void setValue1(String value1) {
-		this.usage1 = value1;
+	public void setUsage(String usage) {
+		this.usage = usage;
 	}
-	public String getValue2() {
-		return usage2;
-	}
-	public void setValue2(String value2) {
-		this.usage2 = value2;
-	}
-	public String getValue3() {
-		return usage3;
-	}
-	public void setValue3(String value3) {
-		this.usage3 = value3;
-	}
-	public String getValue4() {
-		return usage4;
-	}
-	public void setValue4(String value4) {
-		this.usage4 = value4;
-	}
+	
 	
 }

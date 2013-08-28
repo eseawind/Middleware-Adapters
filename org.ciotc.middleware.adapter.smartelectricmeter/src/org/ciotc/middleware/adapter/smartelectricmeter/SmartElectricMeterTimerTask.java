@@ -78,7 +78,7 @@ public class SmartElectricMeterTimerTask extends TimerTask{
 		
 		System.out.println("===Print Result===");
 		for(SmartElectricMeter sm : meters.getSmartElectricMeter()){
-			System.out.println(sm.getMeterID() + "," + sm.getMeterName() + "," + sm.getValue1());
+			System.out.println(sm.getMeterID() + "," + sm.getMeterName() + "," + sm.getUsage());
 		}
 		
 		try {

@@ -19,9 +19,9 @@ import org.ciotc.middleware.sensors.AbstractSensorFactory;
  *
  */
 public class SmartElectricMeterSensorFactory extends AbstractSensorFactory<SmartElectricMeterSensor>{
-	public static final String FACTORY_ID = "SmartElectricMeter Sensor";
+	public static final String FACTORY_ID = "SmartElectricMeterSensorFactory";
 	public static final String description = "A SmartElectricMeter Sensor Adapter";
-	public static final String displayName = "SmartElectricMeter Sesnor";
+	public static final String displayName = "SmartElectricMeterSesnor";
 	private volatile NotifierService notifierService;
 	@Override
 	public void createInstance(String serviceID)
@@ -37,7 +37,7 @@ public class SmartElectricMeterSensorFactory extends AbstractSensorFactory<Smart
 		SmartElectricMeterSensor instance = new SmartElectricMeterSensor();
 		instance.setID(serviceID);
 		instance.setNotifiyService(this.notifierService);
-		instance.register(getContext(), "SmartElectricMeter Sensor");
+		instance.register(getContext(), "SmartElectricMeterSensor");
 	}
 
 	@Override

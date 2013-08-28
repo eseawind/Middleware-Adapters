@@ -108,13 +108,7 @@ public class SmartMeterHelper extends DefaultHandler{
 			usageOrder ++;
 			String value = new String(ch,start,length);
 			if(usageOrder == 1){
-				meter.setValue1(value);
-			}else if(usageOrder == 2){
-				meter.setValue2(value);
-			}else if(usageOrder == 3){
-				meter.setValue3(value);
-			}else {
-				meter.setValue4(value);
+				meter.setUsage(value);
 			}
 		}
 		
@@ -131,7 +125,7 @@ public class SmartMeterHelper extends DefaultHandler{
 		meters = smh.getMeters(is);
 		System.out.println("===Print Result===");
 		for(SmartElectricMeter sm : meters.getSmartElectricMeter()){
-			System.out.println(sm.getMeterID() + "," + sm.getMeterName() + "," + sm.getValue1());
+			System.out.println(sm.getMeterID() + "," + sm.getMeterName() + "," + sm.getUsage());
 		}
 	}
 

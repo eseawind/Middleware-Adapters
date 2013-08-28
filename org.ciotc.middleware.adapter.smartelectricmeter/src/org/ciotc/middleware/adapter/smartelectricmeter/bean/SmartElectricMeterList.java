@@ -9,23 +9,25 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.ciotc.middleware.adapter.smartelectricmeter.util.NameSpace;
 
-@XmlRootElement(namespace=NameSpace.SMSG_URI,name="SmartMeterList")
+
+@XmlRootElement(namespace=NameSpace.SMSG_URI,name="SmartElectricMeterDataList")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SmartMeterList", namespace = "http://ciotc.org/wsn/Sensor/msg", propOrder = {
-    "SmartMeterData"
+@XmlType(name = "SmartElectricMeterDataList", namespace = "http://ciotc.org/wsn/Sensor/msg", propOrder = {
+    "smartElectricMeterData"
 })
 public class SmartElectricMeterList {
 
     @XmlElement(required = true,namespace=NameSpace.SMSG_URI)
-    protected ArrayList<SmartElectricMeter> smartElectricMeter;
+    protected ArrayList<SmartElectricMeter> smartElectricMeterData;
 
 	public ArrayList<SmartElectricMeter> getSmartElectricMeter() {
-		return smartElectricMeter;
+		return smartElectricMeterData;
 	}
 
 	public void setSmartElectricMeter(ArrayList<SmartElectricMeter> meters) {
-		this.smartElectricMeter = meters;
+		this.smartElectricMeterData = meters;
 	}
 
 }
