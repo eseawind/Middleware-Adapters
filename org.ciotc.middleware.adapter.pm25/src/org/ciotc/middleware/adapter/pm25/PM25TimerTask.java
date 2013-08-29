@@ -8,10 +8,15 @@ package org.ciotc.middleware.adapter.pm25;
 
 import java.util.Date;
 import java.util.TimerTask;
+import java.util.logging.Logger;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
+import org.ciotc.middleware.adapter.pm25.pojo.PM25Value;
+import org.ciotc.middleware.adapter.pm25.util.Convertor;
 import org.ciotc.middleware.notification.MessageDto;
 import org.ciotc.middleware.sensors.AbstractSensor;
 /**
@@ -19,6 +24,7 @@ import org.ciotc.middleware.sensors.AbstractSensor;
  *
  */
 public class PM25TimerTask extends TimerTask{
+	private static final Log logger = LogFactory.getLog(PM25TimerTask.class);
     private static AbstractSensor sensor;
     private static String wsdl;
     
@@ -48,7 +54,7 @@ public class PM25TimerTask extends TimerTask{
 	    Client client = dcf.createClient(wsdl);
 		Object[] result = null;
 		Integer pm25 = null;
-		
+		PM25Value pm25Value = new PM25Value();
 		try{
 			result = client.invoke("getPM25Value", "");
 			if(result != null && !"".equals(result)){
@@ -65,13 +71,19 @@ public class PM25TimerTask extends TimerTask{
 			pm25 = this.maxValue;
 		}else{
 		}
-		//For Debug
-		System.out.println("pm25 value after processing :" + pm25);
+		pm25Value.setPm25Value(pm25.toString());
 		MessageDto msgDto = new MessageDto();
 		msgDto.setReaderID(sensor.getID());
 		msgDto.setSequence("0");
 		//TODO change pm25 value to xml format
-		msgDto.setXmlData(pm25.toString());
+		try {
+			msgDto.setXmlData(Convertor.objToXml(pm25Value, PM25Value.class));
+			//debug
+			logger.info("PM25 value after processing: " + Convertor.objToXml(pm25Value, PM25Value.class));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		sensor.send(msgDto);
 	}

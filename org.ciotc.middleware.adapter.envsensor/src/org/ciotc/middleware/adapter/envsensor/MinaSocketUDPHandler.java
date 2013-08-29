@@ -16,6 +16,8 @@ import org.apache.mina.core.session.IoSession;
 import org.ciotc.middleware.notification.MessageDto;
 import org.ciotc.middleware.sensors.AbstractSensor;
 import org.ciotc.middleware.sensors.Sensor;
+import org.ciotc.middleware.adapter.envsensor.pojo.*;
+import org.ciotc.middleware.adapter.envsensor.util.*;
 
 /**
  * @author ZhangMin.name
@@ -40,30 +42,29 @@ public class MinaSocketUDPHandler extends IoHandlerAdapter {
 			throws Exception {
 		logger.info("...receiving msg...");
 		IoBuffer ib = (IoBuffer)message;
-		String data = ib.getHexDump().replaceAll(" ", "");
+		MessageDto msg = new MessageDto();
+		String rcvData = ib.getHexDump().replaceAll(" ", "");
 		logger.debug(ib.getHexDump());
 		
-		Integer type = Integer.parseInt(data.substring(10, 14), 16);
+		Integer type = Integer.parseInt(rcvData.substring(10, 14), 16);
 		
 		if(11 == type){
-			logger.info(" type 11 ");
+			Sensor11Data sd = (Sensor11Data)ProtocolParser.parse(rcvData,11);
+			msg.setReaderID(this.readerID);
+			msg.setSequence("0");
+			msg.setXmlData(Convertor.objToXml(sd, Sensor11Data.class));
+			//debug
+			logger.info("senser type 11's xmldata:" + Convertor.objToXml(sd, Sensor11Data.class));
 		}
 		
 		if(12 == type){
-			
-			//温度值
-			Integer tv = Integer.parseInt(data.substring(28,32),16);
-			double t = tv * 0.01 - 39.66;
-			//湿度值
-			Integer hv = Integer.parseInt(data.substring(32,36),16);
-			double h = -4.0 + 0.0405 * hv -(2.8E-6)*hv*hv;
-			//二氧化碳值
-			Integer dv = Integer.parseInt(data.substring(36,40),16);
-		    logger.info("carbon dioxide:" + dv + " temperature :" + t + "humidity :" + h);
-			
+			Sensor12Data sd = (Sensor12Data)ProtocolParser.parse(rcvData, 12);
+			msg.setReaderID(this.readerID);
+			msg.setSequence("0");
+			msg.setXmlData(Convertor.objToXml(sd, Sensor12Data.class));
+			//debug
+			logger.info("senser type 12's xmldata:" + Convertor.objToXml(sd, Sensor12Data.class));
 		}
-		//MessageDto msg = new MessageDto();
-		
 		
 	}
 	@Override

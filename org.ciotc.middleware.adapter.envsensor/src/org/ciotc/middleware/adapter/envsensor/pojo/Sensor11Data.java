@@ -9,8 +9,10 @@ package org.ciotc.middleware.adapter.envsensor.pojo;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import org.ciotc.middleware.adapter.envsensor.util.NameSpace;
 
 
@@ -24,11 +26,27 @@ import org.ciotc.middleware.adapter.envsensor.util.NameSpace;
 @XmlRootElement(namespace=NameSpace.SMSG_URI,name="Sensor11Data")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Sensor11Data", namespace = "http://ciotc.org/wsn/Sensor/msg", propOrder = {
-	""
+	"uvIndex",
+	"lightIntesity"
 })
 
 public class Sensor11Data {
-	String uvIndex;
-	String lightIntesity;
+	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
+	private String uvIndex;
+	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
+	private String lightIntesity;
+	public String getUvIndex() {
+		return uvIndex;
+	}
+	public void setUvIndex(String uvIndex) {
+		this.uvIndex = uvIndex;
+	}
+	public String getLightIntesity() {
+		return lightIntesity;
+	}
+	public void setLightIntesity(String lightIntesity) {
+		this.lightIntesity = lightIntesity;
+	}
+	
 	
 }
