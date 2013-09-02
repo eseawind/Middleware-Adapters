@@ -26,7 +26,8 @@ import org.ciotc.middleware.adapter.envsensor.util.NameSpace;
 @XmlType(name = "Sensor12Data", namespace = "http://ciotc.org/wsn/Sensor/msg", propOrder = {
 	"carbonDioxide",
 	"humidity",
-	"temperature"
+	"temperature",
+	"timestamp"
 })
 public class Sensor12Data {
 	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
@@ -35,6 +36,8 @@ public class Sensor12Data {
 	private String humidity;
 	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
 	private String temperature;
+	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
+	private long timestamp;
 	public String getCarbonDioxide() {
 		return carbonDioxide;
 	}
@@ -52,6 +55,12 @@ public class Sensor12Data {
 	}
 	public void setTemperature(String temperature) {
 		this.temperature = temperature;
+	}
+	public long getTimestamp() {
+		return timestamp;
+	}
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
 	
 }

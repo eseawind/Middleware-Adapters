@@ -72,10 +72,10 @@ public class PM25TimerTask extends TimerTask{
 		}else{
 		}
 		pm25Value.setPm25Value(pm25.toString());
+		pm25Value.setTimestamp(System.currentTimeMillis());
 		MessageDto msgDto = new MessageDto();
 		msgDto.setReaderID(sensor.getID());
 		msgDto.setSequence("0");
-		//TODO change pm25 value to xml format
 		try {
 			msgDto.setXmlData(Convertor.objToXml(pm25Value, PM25Value.class));
 			//debug

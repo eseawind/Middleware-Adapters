@@ -27,7 +27,8 @@ import org.ciotc.middleware.adapter.envsensor.util.NameSpace;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Sensor11Data", namespace = "http://ciotc.org/wsn/Sensor/msg", propOrder = {
 	"uvIndex",
-	"lightIntesity"
+	"lightIntesity",
+	"timestamp"
 })
 
 public class Sensor11Data {
@@ -35,6 +36,8 @@ public class Sensor11Data {
 	private String uvIndex;
 	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
 	private String lightIntesity;
+	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
+	private long timestamp;
 	public String getUvIndex() {
 		return uvIndex;
 	}
@@ -46,6 +49,12 @@ public class Sensor11Data {
 	}
 	public void setLightIntesity(String lightIntesity) {
 		this.lightIntesity = lightIntesity;
+	}
+	public long getTimestamp() {
+		return timestamp;
+	}
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
 	
 	

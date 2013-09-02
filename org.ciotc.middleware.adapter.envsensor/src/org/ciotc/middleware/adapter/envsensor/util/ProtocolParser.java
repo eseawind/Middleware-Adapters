@@ -53,6 +53,7 @@ public class ProtocolParser {
 			}else{ }
 			retVal.setUvIndex(uvv.toString());
 			retVal.setLightIntesity(new Double(liv).toString());
+			retVal.setTimestamp(System.currentTimeMillis());
 			return retVal;
 		}else if(type == 12){
 			Sensor12Data retVal = new Sensor12Data();
@@ -66,6 +67,7 @@ public class ProtocolParser {
 			retVal.setCarbonDioxide(new Double(cav).toString());
 			retVal.setHumidity(new Double(hv).toString());
 			retVal.setTemperature(new Double(tv).toString());
+			retVal.setTimestamp(System.currentTimeMillis());
 			return retVal;
 		}else{}
 		return null;

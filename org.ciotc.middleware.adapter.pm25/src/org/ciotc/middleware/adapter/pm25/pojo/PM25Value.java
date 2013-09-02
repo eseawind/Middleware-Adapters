@@ -22,18 +22,28 @@ import org.ciotc.middleware.adapter.pm25.util.NameSpace;
 @XmlRootElement(namespace=NameSpace.SMSG_URI,name="PM25SensorData")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PM25SensorData", namespace = "http://ciotc.org/wsn/Sensor/msg", propOrder = {
-	"pm25Value"
+	"pm25Value",
+	"timestamp"
 })
 public class PM25Value {
 	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
 	private String pm25Value;
-
+	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
+	private long timestamp;
 	public String getPm25Value() {
 		return pm25Value;
 	}
 
 	public void setPm25Value(String pm25Value) {
 		this.pm25Value = pm25Value;
+	}
+
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
 	
 }
