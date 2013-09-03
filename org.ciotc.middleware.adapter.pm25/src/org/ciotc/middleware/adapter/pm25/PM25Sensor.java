@@ -152,15 +152,14 @@ public class PM25Sensor extends AbstractSensor<PM25SensorSession>{
 	}
 	
 	@Property(displayName = "WSDL URL",description = "WSDL URL of the PM25 Sensor Web Service Server",writable = true,type = PropertyType.PT_STRING,category = "connection",defaultValue = "http://221.6.107.78:8022/PM25WebService.asmx?WSDL",orderValue = 0.0F,maxValue = "",minValue = "")
-	
-	public String getWsdlUrl(){
+    public String getWsdlUrl(){
 		return wsdlUrl;
 	}
 	public void setWsdlUrl(String wsdlUrl){
 		this.wsdlUrl = wsdlUrl;
 	}
 	
-	@Property(displayName = "DelayTime",description = "Call webservice delay time,this time is in seconds",writable = true,type = PropertyType.PT_STRING,category = "connection",defaultValue = "10",orderValue = 0.0F,maxValue = "",minValue = "0")
+	@Property(displayName = "DelayTime",description = "Call webservice delay time,this time is in seconds",writable = true,type = PropertyType.PT_INTEGER,category = "connection",defaultValue = "10",orderValue = 0.0F,maxValue = "",minValue = "0")
 	public Integer getDelayTime() {
 		return delayTime;
 	}
