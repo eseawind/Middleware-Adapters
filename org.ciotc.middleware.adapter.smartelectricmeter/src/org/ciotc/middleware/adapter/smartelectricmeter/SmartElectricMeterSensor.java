@@ -155,7 +155,7 @@ public class SmartElectricMeterSensor extends AbstractSensor< SmartElectricMeter
 		this.url = url;
 	}
 	
-	@Property(displayName = "DelayTime",description = "Call webservice delay time,this time is in seconds",writable = true,type = PropertyType.PT_STRING,category = "connection",defaultValue = "10",orderValue = 0.0F,maxValue = "",minValue = "0")
+	@Property(displayName = "DelayTime",description = "Call webservice delay time,this time is in seconds",writable = true,type = PropertyType.PT_INTEGER,category = "connection",defaultValue = "10",orderValue = 0.0F,maxValue = "",minValue = "0")
 	public Integer getDelayTime() {
 		return delayTime;
 	}
