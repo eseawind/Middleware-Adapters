@@ -14,7 +14,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.ciotc.middleware.adapter.pm25.util.NameSpace;
-
 /**
  * @author ZhangMin.name
  *
