@@ -11,8 +11,8 @@ import org.ciotc.middleware.sensors.AbstractSensorFactory;
 
 public class EnvSensorFactory extends AbstractSensorFactory<EnvSensor> {
 
-	public static final String FACTORY_ID = "EnvSensor";
-	private static final String description = "A EnvSensor Middlerware Adapter.  ";
+	public static final String FACTORY_ID = "EnvironmentSensor";
+	private static final String description = "A EnvironmentSensor Middlerware Adapter.  ";
 	private static final String displayname = "EnvironmentSensor";
 	private volatile NotifierService notifierService;
 
@@ -48,12 +48,12 @@ public class EnvSensorFactory extends AbstractSensorFactory<EnvSensor> {
 		EnvSensor instance = new EnvSensor();
 		instance.setID(serviceID);
 		instance.setNotifiyService(this.notifierService);
-		instance.register(getContext(), "EnvSensor");
+		instance.register(getContext(), "EnvironmentSensor");
 
 	}
 
 	public String getFactoryID() {
-		return "EnvSensor";
+		return "EnvironmentSensor";
 	}
 
 	public MBeanInfo getServiceDescription(String factoryID) {

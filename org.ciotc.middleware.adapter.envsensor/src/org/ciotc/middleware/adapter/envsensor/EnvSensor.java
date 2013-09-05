@@ -75,10 +75,6 @@ public class EnvSensor extends AbstractSensor<EnvSensorSession> {
 	    }
 	}
 
-	protected String getDisplayName() {
-		return this.displayName;
-	}
-
 	public Map<String, SensorSession> getSensorSessions() {
 		Map ret = new HashMap();
 		EnvSensorSession genericsession = (EnvSensorSession) this.session.get();
@@ -96,8 +92,21 @@ public class EnvSensor extends AbstractSensor<EnvSensorSession> {
 	public MBeanInfo getMBeanInfo() {
 		return mbeaninfo;
 	}
-
-	@Property(displayName = "Port", description = "The port that the reader will listen for incoming connections from.", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = "4568", orderValue = 1.0F, maxValue = "", minValue = "")
+	@Property(displayName = "EnvironmentSensor",description = "EnvironmentSensor display name",
+			writable = true,type = PropertyType.PT_STRING,category = "connection",
+			defaultValue = "EnvironmentSensor",
+			orderValue = 0.0F,maxValue = "",minValue = "")
+	public String getDisplayName() {
+		return displayName;
+	}
+	public void setDisplayName(String displayName){
+		this.displayName = displayName;
+	}
+	
+	@Property(displayName = "Port", 
+			description = "The port that the reader will listen for incoming connections from.", 
+			writable = true, type = PropertyType.PT_INTEGER, category = "connection", 
+			defaultValue = "4568", orderValue = 1.0F, maxValue = "", minValue = "")
 	public Integer getPort() {
 		return this.port;
 	}

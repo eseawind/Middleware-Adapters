@@ -37,10 +37,10 @@ public class PM25Sensor extends AbstractSensor<PM25SensorSession>{
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	private AtomicReference<PM25SensorSession> session = new AtomicReference();
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
+	private String displayName  = "PM25Sensor";
 	private volatile String wsdlUrl = "http://221.6.107.78:8022/PM25WebService.asmx?WSDL";
 	private Integer delayTime = Integer.valueOf(10);
 	private Integer intervalTime = Integer.valueOf(60);
-	private String displayName  = "PM25 Sensor";
 	//Max value of PM25
 	private Integer maxValue = Integer.valueOf(300);
 	//Min value of PM25
@@ -115,10 +115,7 @@ public class PM25Sensor extends AbstractSensor<PM25SensorSession>{
 		
 	}
 
-	@Override
-	protected String getDisplayName() {
-		return displayName;
-	}
+	
 
 	@Override
 	public void unbindCommandConfiguration(
@@ -146,12 +143,21 @@ public class PM25Sensor extends AbstractSensor<PM25SensorSession>{
 			}
 		}
 	}
-	
+	@Property(displayName = "PM25Sensor",description = "PM25Sensor display name",
+			writable = true,type = PropertyType.PT_STRING,category = "connection",
+			defaultValue = "PM25Sensor",
+			orderValue = 0.0F,maxValue = "",minValue = "")
+	public String getDisplayName() {
+		return displayName;
+	}
 	public void setDisplayName(String displayName){
 		this.displayName = displayName;
 	}
-	
-	@Property(displayName = "WSDL URL",description = "WSDL URL of the PM25 Sensor Web Service Server",writable = true,type = PropertyType.PT_STRING,category = "connection",defaultValue = "http://221.6.107.78:8022/PM25WebService.asmx?WSDL",orderValue = 0.0F,maxValue = "",minValue = "")
+	@Property(displayName = "WSDL URL",
+			description = "WSDL URL of the PM25 Sensor Web Service Server",
+			writable = true,type = PropertyType.PT_STRING,category = "connection",
+			defaultValue = "http://221.6.107.78:8022/PM25WebService.asmx?WSDL",
+			orderValue = 1.0F,maxValue = "",minValue = "")
     public String getWsdlUrl(){
 		return wsdlUrl;
 	}
@@ -159,7 +165,10 @@ public class PM25Sensor extends AbstractSensor<PM25SensorSession>{
 		this.wsdlUrl = wsdlUrl;
 	}
 	
-	@Property(displayName = "DelayTime",description = "Call webservice delay time,this time is in seconds",writable = true,type = PropertyType.PT_INTEGER,category = "connection",defaultValue = "10",orderValue = 0.0F,maxValue = "",minValue = "0")
+	@Property(displayName = "DelayTime",
+			description = "Call webservice delay time,this time is in seconds",
+			writable = true,type = PropertyType.PT_INTEGER,category = "connection",
+			defaultValue = "10",orderValue = 2.0F,maxValue = "",minValue = "0")
 	public Integer getDelayTime() {
 		return delayTime;
 	}
@@ -168,7 +177,10 @@ public class PM25Sensor extends AbstractSensor<PM25SensorSession>{
 		this.delayTime = delayTime;
 	}
 
-	@Property(displayName = "IntervalTime", description = "Call webservice interval time, the time in seconds", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = "60", orderValue = 0.0F, maxValue = "", minValue = "0")
+	@Property(displayName = "IntervalTime", 
+			description = "Call webservice interval time, the time in seconds", 
+			writable = true, type = PropertyType.PT_INTEGER, category = "connection", 
+			defaultValue = "60", orderValue = 3.0F, maxValue = "", minValue = "0")
 	public Integer getIntervalTime() {
 		return intervalTime;
 	}
@@ -176,14 +188,18 @@ public class PM25Sensor extends AbstractSensor<PM25SensorSession>{
 	public void setIntervalTime(Integer intervalTime) {
 		this.intervalTime = intervalTime;
 	}
-	@Property(displayName = "maxValue", description = "max value of PM25", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = "200", orderValue = 0.0F, maxValue = "", minValue = "0")
+	@Property(displayName = "maxValue", description = "max value of PM25", 
+			writable = true, type = PropertyType.PT_INTEGER, category = "connection",
+			defaultValue = "200", orderValue = 4.0F, maxValue = "", minValue = "0")
 	public Integer getMaxValue(){
 		return this.maxValue;
 	}
 	public void setMaxValue(Integer maxValue){
 		this.maxValue = maxValue;
 	}
-	@Property(displayName = "minValue", description = "min value of PM25", writable = true, type = PropertyType.PT_INTEGER, category = "connection", defaultValue = "00", orderValue = 0.0F, maxValue = "", minValue = "0")
+	@Property(displayName = "minValue", description = "min value of PM25",
+			writable = true, type = PropertyType.PT_INTEGER, category = "connection", 
+			defaultValue = "00", orderValue = 5.0F, maxValue = "", minValue = "0")
 	public Integer getMinValue(){
 		return this.minValue;
 	}
