@@ -22,7 +22,8 @@ import org.rifidi.edge.api.SessionDTO;
 
 @JMXMBean
 public class PositioningSensor extends AbstractSensor<PositioningSensorSession> {
-	private Integer port = Integer.valueOf(4568);
+	private Integer port = Integer.valueOf(5002);
+	private String host = "127.0.0.1";
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	private String displayName = "PositioningSensor";
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
@@ -42,7 +43,7 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 			Integer sessionID = Integer.valueOf(this.sessionID.incrementAndGet());
 			if (this.session.compareAndSet(null, new PositioningSensorSession(this,
 					Integer.toString(sessionID.intValue()), this.notifierService,
-					super.getID(), this.port.intValue(), new HashSet()))) {
+					super.getID(), this.host,this.port.intValue(), new HashSet()))) {
 				this.notifierService.addSessionEvent(getID(), 
 						Integer.toString(sessionID.intValue()));
 				return sessionID.toString();
@@ -57,7 +58,7 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 			Integer sessionID = Integer.valueOf(this.sessionID.incrementAndGet());
 			if (this.session.compareAndSet(null, new PositioningSensorSession(this,
 					Integer.toString(sessionID.intValue()), this.notifierService, 
-					super.getID(), this.port.intValue(), new HashSet()))) {
+					super.getID(), this.host,this.port.intValue(), new HashSet()))) {
 				this.notifierService.addSessionEvent(getID(), 
 						Integer.toString(sessionID.intValue()));
 				return sessionID.toString();
@@ -110,11 +111,22 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 	public void setDisplayName(String displayName){
 		this.displayName = displayName;
 	}
+	@Property(displayName = "Host",
+			description = "The host that the reader will listen for incoming connections from.",
+			writable = true,type = PropertyType.PT_STRING,category = "connection",
+			defaultValue = "127.0.0.1",
+			orderValue = 1.0F,maxValue = "",minValue = "")
+	public String getHost() {
+		return host;
+	}
+	public void setHost(String host){
+		this.host = host;
+	}
 	
 	@Property(displayName = "Port", 
 			description = "The port that the reader will listen for incoming connections from.", 
 			writable = true, type = PropertyType.PT_INTEGER, category = "connection", 
-			defaultValue = "4568", orderValue = 1.0F, maxValue = "", minValue = "")
+			defaultValue = "5002", orderValue = 2.0F, maxValue = "", minValue = "")
 	public Integer getPort() {
 		return this.port;
 	}

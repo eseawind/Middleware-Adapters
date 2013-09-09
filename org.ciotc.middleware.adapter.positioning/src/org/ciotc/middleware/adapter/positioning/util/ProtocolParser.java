@@ -7,7 +7,7 @@
  */
 package org.ciotc.middleware.adapter.positioning.util;
 
-import org.ciotc.middleware.adapter.positioning.pojo.CardInfo;
+import org.ciotc.middleware.adapter.positioning.pojo.PositioningData;
 
 
 /**

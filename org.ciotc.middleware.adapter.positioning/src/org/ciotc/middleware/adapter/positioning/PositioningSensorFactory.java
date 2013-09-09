@@ -51,12 +51,12 @@ public class PositioningSensorFactory extends AbstractSensorFactory<PositioningS
 		PositioningSensor instance = new PositioningSensor();
 		instance.setID(serviceID);
 		instance.setNotifiyService(this.notifierService);
-		instance.register(getContext(), "EnvironmentSensor");
+		instance.register(getContext(), "PositioningSensor");
 
 	}
 
 	public String getFactoryID() {
-		return "EnvironmentSensor";
+		return "PositioningSensor";
 	}
 
 	public MBeanInfo getServiceDescription(String factoryID) {
