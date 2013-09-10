@@ -49,7 +49,7 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 		StaffMessageDto smd = new StaffMessageDto();
 		GwMessage msg = new GwMessage(ib.array(),ib.array().length);
 		if(msg.getType() == GwMessage.MT_LOCATION){
-			
+			//TODO protocol parsing
 		}
 		//GwMessage msg = (GwMessage)message;
 		logger.info("Message received: " + ib.getHexDump());

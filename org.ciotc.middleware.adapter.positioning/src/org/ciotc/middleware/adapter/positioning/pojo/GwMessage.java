@@ -30,7 +30,7 @@ public class GwMessage {
 	protected byte[] data;
 	SimpleDateFormat dateFormate = new SimpleDateFormat("yy,MM,dd,HH,mm,SSSS");
 	
-	protected GwMessage(){ }
+	public GwMessage(){ }
 	
 	public GwMessage(byte[] buf ,int length){
 		data = new byte[length];

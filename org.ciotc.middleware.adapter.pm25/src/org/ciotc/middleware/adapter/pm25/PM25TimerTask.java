@@ -6,6 +6,7 @@
  */
 package org.ciotc.middleware.adapter.pm25;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimerTask;
 import java.util.logging.Logger;
@@ -72,7 +73,8 @@ public class PM25TimerTask extends TimerTask{
 		}else{
 		}
 		pm25Value.setPm25Value(pm25.toString());
-		pm25Value.setTimestamp(System.currentTimeMillis());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		pm25Value.setTimestamp(dateFormat.format(new Date()));
 		MessageDto msgDto = new MessageDto();
 		msgDto.setReaderID(sensor.getID());
 		msgDto.setSequence("0");

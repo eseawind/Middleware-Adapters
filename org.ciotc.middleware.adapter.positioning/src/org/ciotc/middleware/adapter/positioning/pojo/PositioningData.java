@@ -29,24 +29,22 @@ import org.ciotc.middleware.adapter.positioning.util.NameSpace;
 		"cardID",
 		"antennaID",
 		"baseID",
-		"time"
+		"datetime"
 })
 
 public class PositioningData {
 	/** 定位器号 */
 	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
-	private Integer cardID;
+	private String cardID;
 	/** 阅读器（基站）号 */
 	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
-	private Integer readerID;
+	private String readerID;
 	/** 激活器（天线）号 */
 	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
-	private Integer antennaID;
-	/** 接收日期  年月日时分秒*/
+	private String antennaID;
+	/** 接收日期 */
 	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
-	private Date date;
-	/** 接收时间  毫秒*/
-	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
-	private Integer millisecond;
+	private String datetime;
+	
 	
 }
