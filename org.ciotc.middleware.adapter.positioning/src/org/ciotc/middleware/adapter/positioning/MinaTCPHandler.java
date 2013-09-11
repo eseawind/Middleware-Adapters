@@ -39,21 +39,43 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause)
 			throws Exception {
-		cause.printStackTrace();
+		//cause.printStackTrace();
+		logger.error("connection interrupt!");
 	}
 
 	@Override
 	public void messageReceived(IoSession session, Object message)
 			throws Exception {
 		IoBuffer ib = (IoBuffer)message;
-		StaffMessageDto smd = new StaffMessageDto();
-		GwMessage msg = new GwMessage(ib.array(),ib.array().length);
-		if(msg.getType() == GwMessage.MT_LOCATION){
-			//TODO protocol parsing
-		}
-		//GwMessage msg = (GwMessage)message;
 		logger.info("Message received: " + ib.getHexDump());
-		sensor.sendEvent(smd);
+		//将收到的数据分割成一个完整包后进行分析
+		String rcvData = ib.getHexDump();
+		String tmp = "";
+		StringBuffer sb = null;
+		for (int i = 0; i < rcvData.length() - 1; i++) {
+			tmp = rcvData.substring(i, i + 2);
+			if (tmp.equalsIgnoreCase("02")) {
+				sb = new StringBuffer();
+				sb.append(tmp);
+			}else if(tmp.equalsIgnoreCase("03")) {
+				sb.append(tmp);
+				//System.out.println("packet data:" + sb.toString());
+				StaffMessageDto smd = GwMessage.parsePacket(GwMessage
+						.hexToBytes(sb.toString()));
+				if (null != smd) {
+					logger.info("StaffMessageDto:" + smd.getAntennID()
+							+ " " + smd.getBaseID() + " " + smd.getCardID()
+							+ " " + smd.getTime());
+					sensor.sendEvent(smd);
+				} else {
+					logger.info("heartbeat packet received: " + sb.toString());
+				}
+			}else{
+				sb.append(tmp);
+			}
+			i += 2;
+			sb.append(" ");
+		}
 	}
 
 	@Override
@@ -67,8 +89,7 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 }
