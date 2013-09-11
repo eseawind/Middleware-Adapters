@@ -101,6 +101,7 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 	public MBeanInfo getMBeanInfo() {
 		return mbeaninfo;
 	}
+	
 	@Property(displayName = "PositioningtSensor",description = "PositioningtSensor display name",
 			writable = true,type = PropertyType.PT_STRING,category = "connection",
 			defaultValue = "PositioningtSensor",
@@ -111,6 +112,7 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 	public void setDisplayName(String displayName){
 		this.displayName = displayName;
 	}
+	
 	@Property(displayName = "Host",
 			description = "The host that the reader will listen for incoming connections from.",
 			writable = true,type = PropertyType.PT_STRING,category = "connection",
