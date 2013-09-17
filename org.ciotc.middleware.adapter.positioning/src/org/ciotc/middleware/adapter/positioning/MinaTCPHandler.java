@@ -9,8 +9,8 @@ package org.ciotc.middleware.adapter.positioning;
 
 import java.net.InetSocketAddress;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoConnector;
@@ -28,12 +28,14 @@ import org.ciotc.middleware.sensors.Sensor;
  *
  */
 public class MinaTCPHandler extends IoHandlerAdapter{
-	private static final Log logger = LogFactory.getLog(MinaTCPHandler.class);
+	private static final Logger logger = Logger.getLogger(MinaTCPHandler.class);
 	private static String readerID;
 	private static Sensor sensor;
 	public MinaTCPHandler(String readerID, AbstractSensor<?> sensor) {
 		this.readerID = readerID;
 		this.sensor = sensor;
+		//set adapter specified log4j properties
+		PropertyConfigurator.configure(getClass().getResource("log4j.properties"));
 	}
 	
 	@Override
@@ -47,7 +49,7 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 	@Override
 	public void messageReceived(IoSession session, Object message)
 			throws Exception {
-	    
+	    //TODO logging received tags
 		IoBuffer ib = (IoBuffer)message;
 		logger.info("Message received: " + ib.getHexDump());
 		//将收到的数据分割成一个完整包后进行分析
@@ -66,9 +68,9 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 						.hexToBytes(sb.toString()));
 				if (null != smd) {
 					
-					logger.info("StaffMessageDto:" + smd.getAntennID()
-							+ " " + smd.getBaseID() + " " + smd.getCardID()
-							+ " " + smd.getTime());
+					logger.warn("AntennID:" + smd.getAntennID()
+							+ ";BaseID:" + smd.getBaseID() + ";CardID:" + smd.getCardID()
+							+ ";Time:" + smd.getTime());
 					sensor.sendEvent(smd);
 					IoBuffer resp = IoBuffer.wrap(GwMessage.makeHeartBeat());
 					session.write(resp);
