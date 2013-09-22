@@ -23,8 +23,8 @@ import org.ciotc.middleware.sensors.Sensor;
  *
  */
 public class MinaTCPHandler extends IoHandlerAdapter{
-	private static final Log logger = LogFactory.getLog("positiondata");
-	//private static final Logger logger = Logger.getLogger("positiondata");
+	private static final Log logingData = LogFactory.getLog("positiondata");
+	private static final Log logger = LogFactory.getLog(MinaTCPHandler.class);
 	private static String readerID;
 	private static Sensor sensor;
 	public MinaTCPHandler(String readerID, AbstractSensor<?> sensor) {
@@ -64,7 +64,7 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 						.hexToBytes(sb.toString()));
 				if (null != smd) {
 					
-					logger.info("AntennID:" + smd.getAntennID()
+					logingData.info("AntennID:" + smd.getAntennID()
 							+ ";BaseID:" + smd.getBaseID() + ";CardID:" + smd.getCardID()
 							+ ";Time:" + smd.getTime());
 					sensor.sendEvent(smd);
