@@ -87,11 +87,17 @@ public class GwMessage {
 					if(i < 13){
 						id[j % 4] = temp[i];
 						if(j == 3){
+							//卡信息
 							smd.setCardID(bytesToInteger(id).toString());
 						}else if(j == 7){
-							smd.setAntennID(bytesToInteger(id).toString());
-						}else if(j == 11){
+							//阅读器号
 							smd.setBaseID(bytesToInteger(id).toString());
+						}else if(j == 11){
+							//激活器号最高字节表示RSSI值，其余3字节表示激活器号码
+							byte[] realID = new byte[4];
+							realID[0] = 0;
+							System.arraycopy(id, 1, realID, 1, 3);
+							smd.setAntennID(bytesToInteger(realID).toString());
 						}else{ }
 						j ++;
 					}else{

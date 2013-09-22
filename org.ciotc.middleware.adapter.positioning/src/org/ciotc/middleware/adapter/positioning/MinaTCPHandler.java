@@ -7,17 +7,12 @@
  */
 package org.ciotc.middleware.adapter.positioning;
 
-import java.net.InetSocketAddress;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.mina.core.buffer.IoBuffer;
-import org.apache.mina.core.future.ConnectFuture;
-import org.apache.mina.core.service.IoConnector;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
-import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.ciotc.middleware.adapter.positioning.pojo.GwMessage;
 import org.ciotc.middleware.notification.StaffMessageDto;
 import org.ciotc.middleware.sensors.AbstractSensor;
@@ -28,14 +23,15 @@ import org.ciotc.middleware.sensors.Sensor;
  *
  */
 public class MinaTCPHandler extends IoHandlerAdapter{
-	private static final Logger logger = Logger.getLogger(MinaTCPHandler.class);
+	private static final Log logger = LogFactory.getLog("positiondata");
+	//private static final Logger logger = Logger.getLogger("positiondata");
 	private static String readerID;
 	private static Sensor sensor;
 	public MinaTCPHandler(String readerID, AbstractSensor<?> sensor) {
 		this.readerID = readerID;
 		this.sensor = sensor;
 		//set adapter specified log4j properties
-		PropertyConfigurator.configure(getClass().getResource("log4j.properties"));
+		//PropertyConfigurator.configure(getClass().getResource("log4j.properties"));
 	}
 	
 	@Override
@@ -51,7 +47,7 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 			throws Exception {
 	    //TODO logging received tags
 		IoBuffer ib = (IoBuffer)message;
-		logger.info("Message received: " + ib.getHexDump());
+		logger.debug("Message received: " + ib.getHexDump());
 		//将收到的数据分割成一个完整包后进行分析
 		String rcvData = ib.getHexDump();
 		String tmp = "";
@@ -68,15 +64,15 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 						.hexToBytes(sb.toString()));
 				if (null != smd) {
 					
-					logger.warn("AntennID:" + smd.getAntennID()
+					logger.info("AntennID:" + smd.getAntennID()
 							+ ";BaseID:" + smd.getBaseID() + ";CardID:" + smd.getCardID()
 							+ ";Time:" + smd.getTime());
 					sensor.sendEvent(smd);
 					IoBuffer resp = IoBuffer.wrap(GwMessage.makeHeartBeat());
 					session.write(resp);
-					logger.info("response heartbeat packet send.");
+					logger.debug("response heartbeat packet send.");
 				} else {
-					logger.info("heartbeat packet received: " + sb.toString());
+					logger.debug("heartbeat packet received: " + sb.toString());
 				}
 			}else{
 				sb.append(tmp);
