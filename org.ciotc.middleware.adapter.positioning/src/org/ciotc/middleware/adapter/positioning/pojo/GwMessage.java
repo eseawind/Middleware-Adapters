@@ -132,17 +132,22 @@ public class GwMessage {
 	    //System.out.println("bytesToInteger:" + dump(b));
 		return ret;
 	}
-	
+	/**
+	 * convert 8 bytes to time string
+	 * Format:yyyy-MM-dd HH:mm:ss
+	 * @param b
+	 * @return
+	 */
 	public static String bytesToTimeString(byte[] b){
 		StringBuilder sb = new StringBuilder();
 		int year = (int)b[0];
 		sb.append(year+2000);
-		sb.append("/").append((int)b[1]).append("/").append((int)b[2])
+		sb.append("-").append((int)b[1]).append("-").append((int)b[2])
 			.append(" ").append((int)b[3]).append(":").append((int)b[4])
 			.append(":").append((int)b[5]);
-		byte[] millss = new byte[]{b[7],b[6]};
-		int mills = bytesToInteger(millss);
-		sb.append(" ").append(mills);
+		//byte[] millss = new byte[]{b[7],b[6]};
+		//int mills = bytesToInteger(millss);
+		//sb.append(" ").append(mills);
 		//debug 
 		//System.out.println("Timebytes:" + dump(b));
 		//System.out.println("bytesToTimeString:" + sb.toString());
