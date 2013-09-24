@@ -1,0 +1,18 @@
+org.rifidi.edge.configuration=sensorconfig/rifidi.xml
+org.rifidi.edge.sessions.timeout=5000;
+org.rifidi.edge.applications.initial=default.ini
+org.rifidi.edge.core.rmi.port=1101
+
+#mysql
+#org.ciotc.middleware.jdbc.driver=com.mysql.jdbc.Driver
+#org.ciotc.middleware.jdbc.url=jdbc\:mysql\://127.0.0.1\:3306/middleware?
+##no user name or pass needed
+#org.ciotc.middleware.jdbc.user=root
+#org.ciotc.middleware.jdbc.pass=root
+
+#postgresql
+org.ciotc.middleware.jdbc.driver=org.postgresql.Driver
+org.ciotc.middleware.jdbc.url=jdbc\:postgresql\://192.168.108.194\:5432/zhbl?
+#no user name or pass needed
+org.ciotc.middleware.jdbc.user=postgres
+org.ciotc.middleware.jdbc.pass=123456

@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/%E9%AB%98%E4%BA%A4%E4%BC%9A/!svn/ver/7/%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%B9%B3%E5%8F%B0/trunk/org.ciotc.middleware/META-INF/spring
+END
+osgi.xml
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/svn/%E9%AB%98%E4%BA%A4%E4%BC%9A/!svn/ver/24/%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%B9%B3%E5%8F%B0/trunk/org.ciotc.middleware/META-INF/spring/osgi.xml
+END
+aspring.xml
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/svn/%E9%AB%98%E4%BA%A4%E4%BC%9A/!svn/ver/25/%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%B9%B3%E5%8F%B0/trunk/org.ciotc.middleware/META-INF/spring/aspring.xml
+END
+database.xml
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/%E9%AB%98%E4%BA%A4%E4%BC%9A/!svn/ver/66/%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%B9%B3%E5%8F%B0/trunk/org.ciotc.middleware/META-INF/spring/database.xml
+END
+bundle.properties
+K 25
+svn:wc:ra_dav:version-url
+V 151
+/svn/%E9%AB%98%E4%BA%A4%E4%BC%9A/!svn/ver/65/%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%B9%B3%E5%8F%B0/trunk/org.ciotc.middleware/META-INF/spring/bundle.properties
+END
+services-notification-osgi.xml
+K 25
+svn:wc:ra_dav:version-url
+V 163
+/svn/%E9%AB%98%E4%BA%A4%E4%BC%9A/!svn/ver/7/%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%B9%B3%E5%8F%B0/trunk/org.ciotc.middleware/META-INF/spring/services-notification-osgi.xml
+END
+services-notification.xml
+K 25
+svn:wc:ra_dav:version-url
+V 158
+/svn/%E9%AB%98%E4%BA%A4%E4%BC%9A/!svn/ver/7/%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%B9%B3%E5%8F%B0/trunk/org.ciotc.middleware/META-INF/spring/services-notification.xml
+END
+app-api.xml
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/svn/%E9%AB%98%E4%BA%A4%E4%BC%9A/!svn/ver/67/%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%B9%B3%E5%8F%B0/trunk/org.ciotc.middleware/META-INF/spring/app-api.xml
+END
+services-jms-osgi.xml
+K 25
+svn:wc:ra_dav:version-url
+V 154
+/svn/%E9%AB%98%E4%BA%A4%E4%BC%9A/!svn/ver/7/%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%B9%B3%E5%8F%B0/trunk/org.ciotc.middleware/META-INF/spring/services-jms-osgi.xml
+END
+services-jms.xml
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/svn/%E9%AB%98%E4%BA%A4%E4%BC%9A/!svn/ver/7/%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%B9%B3%E5%8F%B0/trunk/org.ciotc.middleware/META-INF/spring/services-jms.xml
+END
+rmi-server.xml
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/svn/%E9%AB%98%E4%BA%A4%E4%BC%9A/!svn/ver/7/%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%B9%B3%E5%8F%B0/trunk/org.ciotc.middleware/META-INF/spring/rmi-server.xml
+END
