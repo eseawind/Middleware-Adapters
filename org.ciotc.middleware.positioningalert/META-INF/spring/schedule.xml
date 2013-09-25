@@ -1,17 +1,32 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:osgi="http://www.springframework.org/schema/osgi"
-	xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-     http://www.springframework.org/schema/osgi 
-     http://www.springframework.org/schema/osgi/spring-osgi.xsd
-     http://activemq.apache.org/schema/core
-     http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd">
+    http://www.springframework.org/schema/osgi 
+    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+    
+    
+   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:META-INF/spring/alert.properties
+			</value>
+		</property>
+		<property name="systemPropertiesMode">
+			<value>2</value>
+		</property>
+	</bean>
 
+	<bean id="datasource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name="driverClass" value="${org.ciotc.middleware.jdbc.driver}" />
+		<property name="url" value="${org.ciotc.middleware.jdbc.url}" />
+		<property name="username" value="${org.ciotc.middleware.jdbc.user}" />
+		<property name="password" value="${org.ciotc.middleware.jdbc.pass}" />
+	</bean>
+	
 	<!-- 要执行的job类 -->
 	<bean id="quartzJob" 
-		class="org.ciotc.middleware.positioningalert.QuartzJob">
+		class="org.ciotc.middleware.positioningalert.DBTester">
+		<property name="dataSource" ref="datasource" />
 	</bean>
 	<!-- 管理类Scheduler配置 -->
 	<bean id="alertScheduler" 
@@ -34,7 +49,7 @@
 	<bean id="testJobDetail" 
 	class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="quartzJob"></property>
-		<property name="targetMethod" value="doJob"></property>
+		<property name="targetMethod" value="testSQL"></property>
 		<property name="concurrent" value="false"></property>
 	</bean>	
 </beans>
