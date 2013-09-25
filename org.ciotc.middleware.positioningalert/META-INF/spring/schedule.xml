@@ -1,5 +1,6 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/osgi 
@@ -23,33 +24,51 @@
 		<property name="password" value="${org.ciotc.middleware.jdbc.pass}" />
 	</bean>
 	
-	<!-- 要执行的job类 -->
-	<bean id="quartzJob" 
-		class="org.ciotc.middleware.positioningalert.DBTester">
+	<!-- StaffOutAlert定时任务配置 -->
+	<bean id="staffOutAlert" 
+		class="org.ciotc.middleware.positioningalert.StaffOutAlert">
 		<property name="dataSource" ref="datasource" />
 	</bean>
+	<bean id="staffOutAlertTrigger" 
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="staffOutAlertDetail"></property>
+		<property name="cronExpression" value="*/20 * * * * ?">
+		</property>	
+	</bean>
+	<bean id="staffOutAlertDetail" 
+	class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="staffOutAlert"></property>
+		<property name="targetMethod" value="runAlertJob"></property>
+		<property name="concurrent" value="false"></property>
+	</bean>	
+
+	<!-- CardBatteryAlert定时任务配置 -->
+	<bean id="cardBatteryAlert" 
+		class="org.ciotc.middleware.positioningalert.CardBatteryAlert">
+		<property name="dataSource" ref="datasource" />
+	</bean>
+	<bean id="cardBatteryAlertTrigger" 
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="cardBatteryAlertDetail"></property>
+		<property name="cronExpression" value="*/20 * * * * ?">
+		</property>	
+	</bean>
+	<bean id="cardBatteryAlertDetail" 
+	class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="cardBatteryAlert"></property>
+		<property name="targetMethod" value="runAlertJob"></property>
+		<property name="concurrent" value="false"></property>
+	</bean>	
+	
 	<!-- 管理类Scheduler配置 -->
 	<bean id="alertScheduler" 
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref bean="testTrigger"></ref>
+				<ref bean="staffOutAlertTrigger"></ref>
+				<ref bean="cardBatteryAlertTrigger"></ref>
 			</list>
 		</property>
 		<property name="autoStartup" value="true"></property>
 	</bean>
-	<!-- Trigger 配置 -->
-	<bean id="testTrigger" 
-		class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail" ref="testJobDetail"></property>
-		<property name="cronExpression" value="*/5 * * * * ?">
-		</property>	
-	</bean>
-	<!-- JobDetail类 -->
-	<bean id="testJobDetail" 
-	class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="quartzJob"></property>
-		<property name="targetMethod" value="testSQL"></property>
-		<property name="concurrent" value="false"></property>
-	</bean>	
 </beans>
