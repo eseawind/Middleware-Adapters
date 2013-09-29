@@ -21,7 +21,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
  *
  */
 public abstract class AbstractAlert {
-	protected static final Log logger = LogFactory.getLog(StaffOutAlert.class);
+	private static final Log logger = LogFactory.getLog(AbstractAlert.class);
 	protected SimpleDriverDataSource dataSource;
 	protected Connection conn;
 	public void setDataSource(SimpleDriverDataSource sdds){

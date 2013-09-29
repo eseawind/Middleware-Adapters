@@ -15,12 +15,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * @author ZhangMin.name
  *
  */
 public class CardBatteryAlert extends AbstractAlert{
-
+	protected static final Log logger = LogFactory.getLog(CardBatteryAlert.class);
 	@Override
 	public void runAlertJob() {
 		logger.info("CardBatteryAlert job started...");
@@ -44,16 +47,18 @@ public class CardBatteryAlert extends AbstractAlert{
 			}
 			Iterator<String> it = targets.iterator();
 			while(it.hasNext()){
-				rs = this.exeuteSQL(
-						"SELECT user_id FROM t_targetmanager WHERE target_id="
-						+ it.next());
-				users.add(rs.getInt(1));
+				ResultSet rs1 = this.exeuteSQL(
+						"SELECT DISTINCT user_id FROM t_targetmanager WHERE target_id=\'"
+						+ it.next() + "\'");
+				while(rs1.next()){
+					 users.add(rs1.getInt(1));
+				}
 			}
 			//生成告警事件 TODO 调用工具类
 			Iterator it1 = targets.iterator();
 			Iterator it2 = users.iterator();
 			while(it1.hasNext() && it2.hasNext()){
-				 logger.info("targetID: " + it1.next() + " userID: " + it2.next());
+				 logger.info("CardBatteryAlert:targetID: " + it1.next() + " userID: " + it2.next());
 			}
 			   
 			close();

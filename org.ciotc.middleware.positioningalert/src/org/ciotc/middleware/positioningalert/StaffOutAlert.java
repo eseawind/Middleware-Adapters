@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 
 /**
@@ -23,8 +26,10 @@ import java.util.Set;
  *
  */
 public class StaffOutAlert extends AbstractAlert{
+	protected static final Log logger = LogFactory.getLog(StaffOutAlert.class);
 	@Override
 	public void runAlertJob() {
+		logger.info("StaffOutAlert started...");
 		List<Integer> outAntenna = new ArrayList<Integer>();
 		List<String> targets = new ArrayList<String>();
 		List<Integer> users = new ArrayList<Integer>();
@@ -35,7 +40,6 @@ public class StaffOutAlert extends AbstractAlert{
 	   try {
 		   while(rs.next()){
 			   outAntenna.add(Integer.parseInt(rs.getString(1)));
-			   logger.info("antennaID: " + rs.getString(1));
 		   }
 		   //获取出楼宇的target_id和user_id
 		   PreparedStatement stmt = conn.prepareStatement(
@@ -56,7 +60,7 @@ public class StaffOutAlert extends AbstractAlert{
 		   Iterator it1 = targets.iterator();
 		   Iterator it2 = users.iterator();
 		   while(it1.hasNext() && it2.hasNext()){
-			   logger.info("targetID: " + it1.next() + " userID: " + it2.next());
+			   logger.info("StaffoutAlert:targetID: " + it1.next() + " userID: " + it2.next());
 		   }
 		   
 		   close();
