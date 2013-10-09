@@ -26,7 +26,7 @@
 	
 	<!-- StaffOutAlert定时任务配置 -->
 	<bean id="staffOutAlert" 
-		class="org.ciotc.middleware.positioningalert.StaffOutAlert">
+		class="org.ciotc.middleware.threadedtimertask.StaffOutAlert">
 		<property name="dataSource" ref="datasource" />
 	</bean>
 	<bean id="staffOutAlertTrigger" 
@@ -44,7 +44,7 @@
 
 	<!-- CardBatteryAlert定时任务配置 -->
 	<bean id="cardBatteryAlert" 
-		class="org.ciotc.middleware.positioningalert.CardBatteryAlert">
+		class="org.ciotc.middleware.threadedtimertask.CardBatteryAlert">
 		<property name="dataSource" ref="datasource" />
 	</bean>
 	<bean id="cardBatteryAlertTrigger" 

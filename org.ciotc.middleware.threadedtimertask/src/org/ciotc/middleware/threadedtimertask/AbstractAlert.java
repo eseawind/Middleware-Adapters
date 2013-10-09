@@ -5,7 +5,7 @@
  * org.ciotc.middleware.positioningalert
  *
  */
-package org.ciotc.middleware.positioningalert;
+package org.ciotc.middleware.threadedtimertask;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

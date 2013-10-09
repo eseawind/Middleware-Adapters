@@ -5,7 +5,7 @@
  * org.ciotc.middleware.positioningalert
  *
  */
-package org.ciotc.middleware.positioningalert;
+package org.ciotc.middleware.threadedtimertask;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -54,7 +54,6 @@ public class CardBatteryAlert extends AbstractAlert{
 					 users.add(rs1.getInt(1));
 				}
 			}
-			//生成告警事件 TODO 调用工具类
 			Iterator it1 = targets.iterator();
 			Iterator it2 = users.iterator();
 			while(it1.hasNext() && it2.hasNext()){

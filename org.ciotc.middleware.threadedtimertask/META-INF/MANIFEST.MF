@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: positioningalert
-Bundle-SymbolicName: org.ciotc.middleware.positioningalert
+Bundle-Name: threadedtimertask
+Bundle-SymbolicName: org.ciotc.middleware.threadedtimertask
 Bundle-Version: 1.0.0
 Bundle-Vendor: ciotc
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

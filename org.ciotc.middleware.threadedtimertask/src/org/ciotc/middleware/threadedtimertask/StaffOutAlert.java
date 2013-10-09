@@ -5,7 +5,7 @@
  * org.ciotc.middleware.positioningalert
  *
  */
-package org.ciotc.middleware.positioningalert;
+package org.ciotc.middleware.threadedtimertask;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -56,7 +56,6 @@ public class StaffOutAlert extends AbstractAlert{
 				   users.add(rs.getInt(2));
 			   }
 		   }
-		   //生成告警事件 TODO 调用工具类
 		   Iterator it1 = targets.iterator();
 		   Iterator it2 = users.iterator();
 		   while(it1.hasNext() && it2.hasNext()){
