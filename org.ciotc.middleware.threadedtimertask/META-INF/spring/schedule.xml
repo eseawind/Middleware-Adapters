@@ -60,6 +60,40 @@
 		<property name="concurrent" value="false"></property>
 	</bean>	
 	
+	<!-- CardExpireAlertAlert定时任务配置 -->
+	<bean id="cardExpireAlert" 
+		class="org.ciotc.middleware.threadedtimertask.CardExpireAlert">
+		<property name="dataSource" ref="datasource" />
+	</bean>
+	<bean id="cardExpireAlertTrigger" 
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="cardExpireAlertDetail"></property>
+		<property name="cronExpression" value="*/20 * * * * ?">
+		</property>	
+	</bean>
+	<bean id="cardExpireAlertDetail" 
+	class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="cardExpireAlert"></property>
+		<property name="targetMethod" value="runAlertJob"></property>
+		<property name="concurrent" value="false"></property>
+	</bean>	
+	<!-- CardStayingAlertyAlert定时任务配置 -->
+	<bean id="cardStayingAlert" 
+		class="org.ciotc.middleware.threadedtimertask.CardStayingAlert">
+		<property name="dataSource" ref="datasource" />
+	</bean>
+	<bean id="cardStayingAlertTrigger" 
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="cardStayingAlertDetail"></property>
+		<property name="cronExpression" value="*/20 * * * * ?">
+		</property>	
+	</bean>
+	<bean id="cardStayingAlertDetail" 
+	class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="cardStayingAlert"></property>
+		<property name="targetMethod" value="runAlertJob"></property>
+		<property name="concurrent" value="false"></property>
+	</bean>	
 	<!-- 管理类Scheduler配置 -->
 	<bean id="alertScheduler" 
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -67,6 +101,8 @@
 			<list>
 				<ref bean="staffOutAlertTrigger"></ref>
 				<ref bean="cardBatteryAlertTrigger"></ref>
+				<ref bean="cardExpireAlertTrigger"></ref>
+				<ref bean="cardStayingAlertTrigger"></ref>
 			</list>
 		</property>
 		<property name="autoStartup" value="true"></property>

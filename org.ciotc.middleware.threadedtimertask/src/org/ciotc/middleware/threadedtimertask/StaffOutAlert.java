@@ -59,7 +59,8 @@ public class StaffOutAlert extends AbstractAlert{
 		   Iterator it1 = targets.iterator();
 		   Iterator it2 = users.iterator();
 		   while(it1.hasNext() && it2.hasNext()){
-			   logger.info("StaffoutAlert:targetID: " + it1.next() + " userID: " + it2.next());
+			   logger.info("StaffoutAlert:targetID: " + it1.next() + 
+					   " userID: " + it2.next());
 		   }
 		   
 		   close();

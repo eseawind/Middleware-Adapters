@@ -48,8 +48,8 @@ public class CardBatteryAlert extends AbstractAlert{
 			Iterator<String> it = targets.iterator();
 			while(it.hasNext()){
 				ResultSet rs1 = this.exeuteSQL(
-						"SELECT DISTINCT user_id FROM t_targetmanager WHERE target_id=\'"
-						+ it.next() + "\'");
+				    "SELECT DISTINCT user_id FROM t_targetmanager WHERE target_id=\'"
+					+ it.next() + "\'");
 				while(rs1.next()){
 					 users.add(rs1.getInt(1));
 				}
@@ -57,7 +57,8 @@ public class CardBatteryAlert extends AbstractAlert{
 			Iterator it1 = targets.iterator();
 			Iterator it2 = users.iterator();
 			while(it1.hasNext() && it2.hasNext()){
-				 logger.info("CardBatteryAlert:targetID: " + it1.next() + " userID: " + it2.next());
+				 logger.info("CardBatteryAlert:targetID: " + it1.next() + 
+						 " userID: " + it2.next());
 			}
 			   
 			close();
