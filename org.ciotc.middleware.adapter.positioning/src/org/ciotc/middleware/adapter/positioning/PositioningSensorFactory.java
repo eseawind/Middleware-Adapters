@@ -1,4 +1,4 @@
-package org.ciotc.middleware.adapter.envsensor;
+package org.ciotc.middleware.adapter.positioning;
 
 import java.util.Map;
 
@@ -9,11 +9,11 @@ import org.ciotc.middleware.notification.NotifierService;
 import org.ciotc.middleware.sensors.AbstractCommandConfiguration;
 import org.ciotc.middleware.sensors.AbstractSensorFactory;
 
-public class EnvSensorFactory extends AbstractSensorFactory<EnvSensor> {
+public class PositioningSensorFactory extends AbstractSensorFactory<PositioningSensor> {
 
-	public static final String FACTORY_ID = "EnvironmentSensor";
-	private static final String description = "A EnvironmentSensor Middlerware Adapter.  ";
-	private static final String displayname = "EnvironmentSensor";
+	public static final String FACTORY_ID = "PositioningSensor";
+	private static final String description = "A PositioningSensor Middlerware Adapter.  ";
+	private static final String displayname = "PositioningSensor";
 	private volatile NotifierService notifierService;
 
 	public void setNotifierService(NotifierService notifierService) {
@@ -28,15 +28,18 @@ public class EnvSensorFactory extends AbstractSensorFactory<EnvSensor> {
 		return displayname;
 	}
 
-	public void bindCommandConfiguration(AbstractCommandConfiguration commandConfiguration, Map properties) {
+	public void bindCommandConfiguration(AbstractCommandConfiguration commandConfiguration, 
+			Map properties) {
 		
 	}
 	
-	public void unbindCommandConfiguration(AbstractCommandConfiguration commandConfiguration, Map properties) {
+	public void unbindCommandConfiguration(AbstractCommandConfiguration commandConfiguration,
+			Map properties) {
 		
 	}
 
-	public void createInstance(String serviceID) throws IllegalArgumentException, InvalidStateException {
+	public void createInstance(String serviceID) 
+			throws IllegalArgumentException, InvalidStateException {
 		if (serviceID == null) {
 			throw new IllegalArgumentException("ServiceID is null");
 		}
@@ -45,19 +48,19 @@ public class EnvSensorFactory extends AbstractSensorFactory<EnvSensor> {
 			throw new InvalidStateException("All services are not set");
 		}
 
-		EnvSensor instance = new EnvSensor();
+		PositioningSensor instance = new PositioningSensor();
 		instance.setID(serviceID);
 		instance.setNotifiyService(this.notifierService);
-		instance.register(getContext(), "EnvironmentSensor");
+		instance.register(getContext(), "PositioningSensor");
 
 	}
 
 	public String getFactoryID() {
-		return "EnvironmentSensor";
+		return "PositioningSensor";
 	}
 
 	public MBeanInfo getServiceDescription(String factoryID) {
-		return EnvSensor.mbeaninfo;
+		return PositioningSensor.mbeaninfo;
 	}
 
 }

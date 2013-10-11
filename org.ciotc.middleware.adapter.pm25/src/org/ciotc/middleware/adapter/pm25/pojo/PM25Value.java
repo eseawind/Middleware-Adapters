@@ -28,7 +28,7 @@ public class PM25Value {
 	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
 	private String pm25Value;
 	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
-	private long timestamp;
+	private String timestamp;
 	public String getPm25Value() {
 		return pm25Value;
 	}
@@ -37,11 +37,11 @@ public class PM25Value {
 		this.pm25Value = pm25Value;
 	}
 
-	public long getTimestamp() {
+	public String getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(long timestamp) {
+	public void setTimestamp(String timestamp) {
 		this.timestamp = timestamp;
 	}
 	

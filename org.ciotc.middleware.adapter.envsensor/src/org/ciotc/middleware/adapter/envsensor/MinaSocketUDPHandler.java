@@ -54,7 +54,8 @@ public class MinaSocketUDPHandler extends IoHandlerAdapter {
 			msg.setSequence("0");
 			msg.setXmlData(Convertor.objToXml(sd, Sensor11Data.class));
 			//debug
-			logger.info("senser type 11's xmldata:" + Convertor.objToXml(sd, Sensor11Data.class));
+			logger.info("senser type 11's xmldata:" + 
+					Convertor.objToXml(sd, Sensor11Data.class));
 		}
 		
 		if(12 == type){

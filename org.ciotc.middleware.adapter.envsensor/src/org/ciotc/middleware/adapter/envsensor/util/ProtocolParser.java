@@ -15,7 +15,7 @@ import org.ciotc.middleware.adapter.envsensor.pojo.Sensor12Data;
  *
  */
 public class ProtocolParser {
-
+    //TODO 跳数改为一个字节，修改协议分析部分
 	public static Object parse(String rcvData,int type){
 		if(type == 11){
 			Sensor11Data retVal = new Sensor11Data();

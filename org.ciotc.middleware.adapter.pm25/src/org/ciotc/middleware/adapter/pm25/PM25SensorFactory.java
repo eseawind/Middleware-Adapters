@@ -2,7 +2,7 @@
  * PM25SensorFactory.java
  * ZhangMin.name - zhangmin@zhangmin.name
  * org.ciotc.middleware.adapter.pm25
- * 2013Äê8ÔÂ20ÈÕ
+ * 2013ï¿½ï¿½8ï¿½ï¿½20ï¿½ï¿½
  */
 package org.ciotc.middleware.adapter.pm25;
 import java.util.Map;
@@ -18,9 +18,9 @@ import org.ciotc.middleware.sensors.AbstractSensorFactory;
  *
  */
 public class PM25SensorFactory extends AbstractSensorFactory<PM25Sensor>{
-	public static final String FACTORY_ID = "PM25 Sensor";
-	public static final String description = "A PM25 Sensor Adapter";
-	public static final String displayName = "PM25 Sesnor";
+	public static final String FACTORY_ID = "PM25Sensor";
+	public static final String description = "A PM25Sensor Adapter";
+	public static final String displayName = "PM25Sensor";
 	private volatile NotifierService notifierService;
 	
 	@Override
@@ -37,7 +37,7 @@ public class PM25SensorFactory extends AbstractSensorFactory<PM25Sensor>{
 		PM25Sensor instance = new PM25Sensor();
 		instance.setID(serviceID);
 		instance.setNotifiyService(this.notifierService);
-		instance.register(getContext(), "PM25 Sensor");
+		instance.register(getContext(), "PM25Sensor");
 	}
 
 	@Override

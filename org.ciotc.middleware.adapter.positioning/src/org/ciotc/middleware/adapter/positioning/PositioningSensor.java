@@ -1,4 +1,4 @@
-package org.ciotc.middleware.adapter.envsensor;
+package org.ciotc.middleware.adapter.positioning;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,17 +21,18 @@ import org.ciotc.middleware.sensors.SensorSession;
 import org.rifidi.edge.api.SessionDTO;
 
 @JMXMBean
-public class EnvSensor extends AbstractSensor<EnvSensorSession> {
-	private Integer port = Integer.valueOf(4568);
+public class PositioningSensor extends AbstractSensor<PositioningSensorSession> {
+	private Integer port = Integer.valueOf(5002);
+	private String host = "127.0.0.1";
 	private AtomicInteger sessionID = new AtomicInteger(0);
-	private String displayName = "EnvironmentSensor";
+	private String displayName = "PositioningSensor";
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
-	private AtomicReference<EnvSensorSession> session = new AtomicReference();
+	private AtomicReference<PositioningSensorSession> session = new AtomicReference();
 	public static final MBeanInfo mbeaninfo;
 
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
-		mbeaninfo = strategy.getMBeanInfo(EnvSensor.class);
+		mbeaninfo = strategy.getMBeanInfo(PositioningSensor.class);
 	}
 
 	public void applyPropertyChanges() {
@@ -40,21 +41,26 @@ public class EnvSensor extends AbstractSensor<EnvSensorSession> {
 	public String createSensorSession() throws CannotCreateSessionException {
 		if ((!(this.destroyed.get())) && (this.session.get() == null)) {
 			Integer sessionID = Integer.valueOf(this.sessionID.incrementAndGet());
-			if (this.session.compareAndSet(null, new EnvSensorSession(this,
-					Integer.toString(sessionID.intValue()), this.notifierService, super.getID(), this.port.intValue(), new HashSet()))) {
-				this.notifierService.addSessionEvent(getID(), Integer.toString(sessionID.intValue()));
+			if (this.session.compareAndSet(null, new PositioningSensorSession(this,
+					Integer.toString(sessionID.intValue()), this.notifierService,
+					super.getID(), this.host,this.port.intValue(), new HashSet()))) {
+				this.notifierService.addSessionEvent(getID(), 
+						Integer.toString(sessionID.intValue()));
 				return sessionID.toString();
 			}
 		}
 		throw new CannotCreateSessionException();
 	}
 
-	public String createSensorSession(SessionDTO sessionDTO) throws CannotCreateSessionException {
+	public String createSensorSession(SessionDTO sessionDTO) 
+			throws CannotCreateSessionException {
 		if ((!(this.destroyed.get())) && (this.session.get() == null)) {
 			Integer sessionID = Integer.valueOf(this.sessionID.incrementAndGet());
-			if (this.session.compareAndSet(null, new EnvSensorSession(this,
-					Integer.toString(sessionID.intValue()), this.notifierService, super.getID(), this.port.intValue(), new HashSet()))) {
-				this.notifierService.addSessionEvent(getID(), Integer.toString(sessionID.intValue()));
+			if (this.session.compareAndSet(null, new PositioningSensorSession(this,
+					Integer.toString(sessionID.intValue()), this.notifierService, 
+					super.getID(), this.host,this.port.intValue(), new HashSet()))) {
+				this.notifierService.addSessionEvent(getID(), 
+						Integer.toString(sessionID.intValue()));
 				return sessionID.toString();
 			}
 		}
@@ -62,11 +68,13 @@ public class EnvSensor extends AbstractSensor<EnvSensorSession> {
 	}
 
 	public void destroySensorSession(String id) throws CannotDestroySensorException {
-		EnvSensorSession envSensorSession = (EnvSensorSession)this.session.get();
-	    if ((envSensorSession != null) && (envSensorSession.getID().equals(id))) {
+		PositioningSensorSession positioningSensorSession = 
+				(PositioningSensorSession)this.session.get();
+	    if ((positioningSensorSession != null) && 
+	    		(positioningSensorSession.getID().equals(id))) {
 	      this.session.set(null);
-	      envSensorSession.killAllCommands();
-	      envSensorSession.disconnect();
+	      positioningSensorSession.killAllCommands();
+	      positioningSensorSession.disconnect();
 
 	      this.notifierService.removeSessionEvent(getID(), id);
 	    } else {
@@ -77,7 +85,8 @@ public class EnvSensor extends AbstractSensor<EnvSensorSession> {
 
 	public Map<String, SensorSession> getSensorSessions() {
 		Map ret = new HashMap();
-		EnvSensorSession genericsession = (EnvSensorSession) this.session.get();
+		PositioningSensorSession genericsession = 
+				(PositioningSensorSession) this.session.get();
 		if (genericsession != null)
 			ret.put(genericsession.getID(), genericsession);
 
@@ -92,9 +101,10 @@ public class EnvSensor extends AbstractSensor<EnvSensorSession> {
 	public MBeanInfo getMBeanInfo() {
 		return mbeaninfo;
 	}
-	@Property(displayName = "EnvironmentSensor",description = "EnvironmentSensor display name",
+	
+	@Property(displayName = "PositioningtSensor",description = "PositioningtSensor display name",
 			writable = true,type = PropertyType.PT_STRING,category = "connection",
-			defaultValue = "EnvironmentSensor",
+			defaultValue = "PositioningtSensor",
 			orderValue = 0.0F,maxValue = "",minValue = "")
 	public String getDisplayName() {
 		return displayName;
@@ -103,10 +113,22 @@ public class EnvSensor extends AbstractSensor<EnvSensorSession> {
 		this.displayName = displayName;
 	}
 	
+	@Property(displayName = "Host",
+			description = "The host that the reader will listen for incoming connections from.",
+			writable = true,type = PropertyType.PT_STRING,category = "connection",
+			defaultValue = "127.0.0.1",
+			orderValue = 1.0F,maxValue = "",minValue = "")
+	public String getHost() {
+		return host;
+	}
+	public void setHost(String host){
+		this.host = host;
+	}
+	
 	@Property(displayName = "Port", 
 			description = "The port that the reader will listen for incoming connections from.", 
 			writable = true, type = PropertyType.PT_INTEGER, category = "connection", 
-			defaultValue = "4568", orderValue = 1.0F, maxValue = "", minValue = "")
+			defaultValue = "5002", orderValue = 2.0F, maxValue = "", minValue = "")
 	public Integer getPort() {
 		return this.port;
 	}
