@@ -23,11 +23,14 @@
 		<property name="username" value="${org.ciotc.middleware.jdbc.user}" />
 		<property name="password" value="${org.ciotc.middleware.jdbc.pass}" />
 	</bean>
-	
+	<bean id="staffAlertDAOImpl" class="org.ciotc.middleware.threadedtimertask.dao.StaffAlertDAOImpl">
+		<property name="dataSource" ref="datasource" />
+	</bean>
+    
 	<!-- StaffOutAlert定时任务配置 -->
 	<bean id="staffOutAlert" 
 		class="org.ciotc.middleware.threadedtimertask.StaffOutAlert">
-		<property name="dataSource" ref="datasource" />
+		<property name="staffAlertDAO" ref="staffAlertDAOImpl" />
 	</bean>
 	<bean id="staffOutAlertTrigger" 
 		class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -45,7 +48,7 @@
 	<!-- CardBatteryAlert定时任务配置 -->
 	<bean id="cardBatteryAlert" 
 		class="org.ciotc.middleware.threadedtimertask.CardBatteryAlert">
-		<property name="dataSource" ref="datasource" />
+		<property name="staffAlertDAO" ref="staffAlertDAOImpl" />
 	</bean>
 	<bean id="cardBatteryAlertTrigger" 
 		class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -63,7 +66,7 @@
 	<!-- CardExpireAlertAlert定时任务配置 -->
 	<bean id="cardExpireAlert" 
 		class="org.ciotc.middleware.threadedtimertask.CardExpireAlert">
-		<property name="dataSource" ref="datasource" />
+		<property name="staffAlertDAO" ref="staffAlertDAOImpl" />
 	</bean>
 	<bean id="cardExpireAlertTrigger" 
 		class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -77,10 +80,11 @@
 		<property name="targetMethod" value="runAlertJob"></property>
 		<property name="concurrent" value="false"></property>
 	</bean>	
+	
 	<!-- CardStayingAlertyAlert定时任务配置 -->
 	<bean id="cardStayingAlert" 
 		class="org.ciotc.middleware.threadedtimertask.CardStayingAlert">
-		<property name="dataSource" ref="datasource" />
+		<property name="staffAlertDAO" ref="staffAlertDAOImpl" />
 	</bean>
 	<bean id="cardStayingAlertTrigger" 
 		class="org.springframework.scheduling.quartz.CronTriggerBean">

@@ -28,7 +28,7 @@ public class CardBatteryAlert extends AbstractAlert{
 	@Override
 	public void runAlertJob() {
 		logger.info("CardBatteryAlert job started...");
-		List<TargetInfoDto> targets = sad.getTargetsInfoByLBSTraceTable();
+		List<TargetInfoDto> targets = staffAlertDAO.getTargetsInfoByLBSTraceTable();
 		List<String> alertTargets = new ArrayList<String>();
 		Iterator<TargetInfoDto> it = targets.iterator();
 		while(it.hasNext()){
@@ -36,19 +36,19 @@ public class CardBatteryAlert extends AbstractAlert{
 			int usetime = ttd.getTargetUseTime();
 			String bat = ttd.getBattery();
 			String target = ttd.getTargetID();
-			int avgtime = sad.getBatteryLifeByID(bat);
+			int avgtime = staffAlertDAO.getBatteryLifeByID(bat);
 			if(usetime > avgtime){
 				alertTargets.add(target);
 			}
 		}
 		//TODO remove after test
-		Map<String,Integer> targetToUser = sad.getTargetUserByTargetID(alertTargets);
+		Map<String,Integer> targetToUser = staffAlertDAO.getTargetUserByTargetID(alertTargets);
 		Set<String> users = targetToUser.keySet();
 		Iterator<String> it1 = users.iterator();
 		while(it1.hasNext()){
 			String target = it1.next();
 			int user = targetToUser.get(target);
-			logger.info("[ExpireCardInfo] target_id:" + target +
+			logger.info("[CardBatteryAlert] target_id:" + target +
 					"user_id:" + user);	
 		}
 		//sad.alarm(2, 1, targetToUsers);

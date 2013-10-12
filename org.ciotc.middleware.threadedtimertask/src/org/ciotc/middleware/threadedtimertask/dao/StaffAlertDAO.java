@@ -23,9 +23,13 @@ public interface StaffAlertDAO {
 	public List<TargetInfoDto> getTargetsInfoByLBSTraceTable();
 	public List<UserTargetOrgnaizeDto> getUTOByLBSTraceTable();
 	public List<TracingTargetDto> getTracingTargetsByLBSTraceTable();
+	public List<TracingTargetDto> 
+				getLeavingTracingTargetByAntennaID(String antennaID);
 	public List<String> getLeaveTargetsFromLBSTraceTableByAntennaID(
 				List<String> anntennaIDs);
 	public Map<String,Integer> 
 				getTargetUserByTargetID(List<String> targets);
 	public int getBatteryLifeByID(String battery);
+	public String getAntennaIDByDevice(int deviceType);
+	
 }

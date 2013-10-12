@@ -33,7 +33,7 @@ public class CardExpireAlert extends AbstractAlert {
 	public void runAlertJob(){
 		logger.info("CardExpireAlert job started...");
 		HashMap<String,Integer> targetToUsers = new HashMap<String,Integer>();
-		List<UserTargetOrgnaizeDto> utos = sad.getUTOByLBSTraceTable();
+		List<UserTargetOrgnaizeDto> utos = staffAlertDAO.getUTOByLBSTraceTable();
 		Iterator<UserTargetOrgnaizeDto> it = utos.iterator();
 		while(it.hasNext()){
 			UserTargetOrgnaizeDto uto = it.next();
@@ -48,7 +48,7 @@ public class CardExpireAlert extends AbstractAlert {
 		while(it2.hasNext()){
 			String target = it2.next();
 			int user = targetToUsers.get(target);
-			logger.info("[ExpireCardInfo] user_id:" + user +
+			logger.info("[CardExpireAlert] user_id:" + user +
 					"target_id:" + target);
 		}
 		//sad.alarm(2, 4, targetToUsers);

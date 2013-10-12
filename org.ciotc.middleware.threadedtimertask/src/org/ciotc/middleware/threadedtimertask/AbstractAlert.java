@@ -22,8 +22,11 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
  * @author ZhangMin.name
  *
  */
-public abstract class AbstractAlert {
+public class AbstractAlert {
 	private static final Log logger = LogFactory.getLog(AbstractAlert.class);
-	protected StaffAlertDAO sad = new StaffAlertDAOImpl();
-	abstract public void runAlertJob();
+	protected StaffAlertDAO staffAlertDAO;
+	public void setStaffAlertDAO(StaffAlertDAO staffAlertDAO){
+		this.staffAlertDAO = staffAlertDAO;
+	}
+	public void runAlertJob(){ }
 }

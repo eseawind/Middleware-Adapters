@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanInfo;
-
 import org.ciotc.middleware.configuration.AnnotationMBeanInfoStrategy;
 import org.ciotc.middleware.configuration.JMXMBean;
 import org.ciotc.middleware.configuration.Property;
@@ -22,7 +21,9 @@ import org.rifidi.edge.api.SessionDTO;
 
 @JMXMBean
 public class EnvSensor extends AbstractSensor<EnvSensorSession> {
-	private Integer port = Integer.valueOf(4568);
+	private volatile String wsdlUrl = "http://122.193.182.139:1212/Service1.asmx?wsdl";
+	private Integer delayTime = Integer.valueOf(10);
+	private Integer intervalTime = Integer.valueOf(60);
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	private String displayName = "EnvironmentSensor";
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
@@ -38,10 +39,10 @@ public class EnvSensor extends AbstractSensor<EnvSensorSession> {
 	}
 
 	public String createSensorSession() throws CannotCreateSessionException {
-		if ((!(this.destroyed.get())) && (this.session.get() == null)) {
+		if((!this.destroyed.get()) && (this.session.get() == null)){
 			Integer sessionID = Integer.valueOf(this.sessionID.incrementAndGet());
-			if (this.session.compareAndSet(null, new EnvSensorSession(this,
-					Integer.toString(sessionID.intValue()), this.notifierService, super.getID(), this.port.intValue(), new HashSet()))) {
+			if(this.session.compareAndSet(null, new EnvSensorSession(this,Integer.toString(sessionID.intValue()),
+					this.wsdlUrl,this.delayTime,this.intervalTime,this.notifierService,getID(),new HashSet()))){
 				this.notifierService.addSessionEvent(getID(), Integer.toString(sessionID.intValue()));
 				return sessionID.toString();
 			}
@@ -51,9 +52,11 @@ public class EnvSensor extends AbstractSensor<EnvSensorSession> {
 
 	public String createSensorSession(SessionDTO sessionDTO) throws CannotCreateSessionException {
 		if ((!(this.destroyed.get())) && (this.session.get() == null)) {
-			Integer sessionID = Integer.valueOf(this.sessionID.incrementAndGet());
-			if (this.session.compareAndSet(null, new EnvSensorSession(this,
-					Integer.toString(sessionID.intValue()), this.notifierService, super.getID(), this.port.intValue(), new HashSet()))) {
+			Integer sessionID = Integer.valueOf(Integer.parseInt(sessionDTO.getID()));
+			if (this.session.compareAndSet(null,new EnvSensorSession(this, Integer.toString(sessionID.intValue()), 
+						this.wsdlUrl, this.delayTime, this.intervalTime,this.notifierService, getID(), new HashSet()))) {
+				((EnvSensorSession) this.session.get()).restoreCommands(sessionDTO);
+				
 				this.notifierService.addSessionEvent(getID(), Integer.toString(sessionID.intValue()));
 				return sessionID.toString();
 			}
@@ -103,16 +106,40 @@ public class EnvSensor extends AbstractSensor<EnvSensorSession> {
 		this.displayName = displayName;
 	}
 	
-	@Property(displayName = "Port", 
-			description = "The port that the reader will listen for incoming connections from.", 
-			writable = true, type = PropertyType.PT_INTEGER, category = "connection", 
-			defaultValue = "4568", orderValue = 1.0F, maxValue = "", minValue = "")
-	public Integer getPort() {
-		return this.port;
+	@Property(displayName = "WSDL URL",
+			description = "WSDL URL of the PM25 Sensor Web Service Server",
+			writable = true,type = PropertyType.PT_STRING,category = "connection",
+			defaultValue = "http://122.193.182.139:1212/Service1.asmx?wsdl",
+			orderValue = 1.0F,maxValue = "",minValue = "")
+    public String getWsdlUrl(){
+		return wsdlUrl;
+	}
+	public void setWsdlUrl(String wsdlUrl){
+		this.wsdlUrl = wsdlUrl;
+	}
+	
+	@Property(displayName = "DelayTime",
+			description = "Call webservice delay time,this time is in seconds",
+			writable = true,type = PropertyType.PT_INTEGER,category = "connection",
+			defaultValue = "10",orderValue = 2.0F,maxValue = "",minValue = "0")
+	public Integer getDelayTime() {
+		return delayTime;
 	}
 
-	public void setPort(Integer port) {
-		this.port = port;
+	public void setDelayTime(Integer delayTime) {
+		this.delayTime = delayTime;
+	}
+
+	@Property(displayName = "IntervalTime", 
+			description = "Call webservice interval time, the time in seconds", 
+			writable = true, type = PropertyType.PT_INTEGER, category = "connection", 
+			defaultValue = "60", orderValue = 3.0F, maxValue = "", minValue = "0")
+	public Integer getIntervalTime() {
+		return intervalTime;
+	}
+
+	public void setIntervalTime(Integer intervalTime) {
+		this.intervalTime = intervalTime;
 	}
 	
 }
