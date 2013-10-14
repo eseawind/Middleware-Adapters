@@ -44,9 +44,9 @@ public class StaffOutAlert extends AbstractAlert{
 		   targetToUsers.put(tt.getTargetID(),tt.getUserID());
 	   }
 	   //TODO remove after test
-	   Set<String> users = targetToUsers.keySet();
-	   Iterator<String> it1 = users.iterator();
-	   while(it.hasNext()){
+	   Set<String> targets = targetToUsers.keySet();
+	   Iterator<String> it1 = targets.iterator();
+	   while(it1.hasNext()){
 		   String target = it1.next();
 		   int user = targetToUsers.get(target);
 		   logger.info("[StaffOutAlert] user_id:" + user +

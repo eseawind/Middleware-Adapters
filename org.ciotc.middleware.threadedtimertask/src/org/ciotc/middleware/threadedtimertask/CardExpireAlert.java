@@ -43,8 +43,8 @@ public class CardExpireAlert extends AbstractAlert {
 			}
 		}
 		//TODO remove after test
-		Set<String> users = targetToUsers.keySet();
-		Iterator<String> it2 = users.iterator();
+		Set<String> targets = targetToUsers.keySet();
+		Iterator<String> it2 = targets.iterator();
 		while(it2.hasNext()){
 			String target = it2.next();
 			int user = targetToUsers.get(target);

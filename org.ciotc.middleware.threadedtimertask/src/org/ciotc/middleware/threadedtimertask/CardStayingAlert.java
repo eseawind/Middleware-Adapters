@@ -30,23 +30,25 @@ public class CardStayingAlert extends AbstractAlert {
 	@Override
 	public void runAlertJob() {
 		logger.info("CardStayingAlert job started...");
-		int interval = 30 * 60 * 1000;
-		HashMap<String,Integer> targetToUser = new HashMap<String,Integer>();
+		//超期停留时间单位为s
+		int interval = 30 * 1000;
+		HashMap<String,Integer> targetToUsers = new HashMap<String,Integer>();
 		List<TracingTargetDto> tts = staffAlertDAO.getTracingTargetsByLBSTraceTable();
 		Iterator<TracingTargetDto> it = tts.iterator();
 		while(it.hasNext()){
 			TracingTargetDto tt = it.next();
 			Timestamp ts = tt.getElTime();
-			if((System.currentTimeMillis() - ts.getTime()) > interval){
-				targetToUser.put(tt.getTargetID(), tt.getUserID());
+			long enterTime = System.currentTimeMillis()- ts.getTime();
+			if(enterTime > interval){
+				targetToUsers.put(tt.getTargetID(), tt.getUserID());
 			}
 		}
 		//TODO remove after test
-		Set<String> users = targetToUser.keySet();
-		Iterator<String> it1 = users.iterator();
-		while(it.hasNext()){
+		Set<String> targets = targetToUsers.keySet();
+		Iterator<String> it1 = targets.iterator();
+		while(it1.hasNext()){
 			String target = it1.next();
-			int user = targetToUser.get(target);
+			int user = targetToUsers.get(target);
 			logger.info("[CardStayingAlertInfo] user_id:" + user +
 					"target_id:" + target);
 		}
