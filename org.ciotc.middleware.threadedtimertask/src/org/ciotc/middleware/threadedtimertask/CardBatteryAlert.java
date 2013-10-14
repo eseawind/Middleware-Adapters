@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ciotc.middleware.threadedtimertask.dao.TargetInfoDto;
 
 /**
  * @author ZhangMin.name
@@ -27,47 +28,30 @@ public class CardBatteryAlert extends AbstractAlert{
 	@Override
 	public void runAlertJob() {
 		logger.info("CardBatteryAlert job started...");
-		List targets = new ArrayList<String>();
-		List users = new ArrayList<Integer>();
-		ResultSet rs = this.exeuteSQL(
-				"SELECT target_id,target_usetime,battery_id FROM t_target "+
-				"WHERE target_id IN (SELECT target_id FROM t_lbsdata)");
-		try{
-			while(rs.next()){
-				int usetime = rs.getInt(2);
-				String bat = rs.getString(3);
-				String target = rs.getString(1);
-				ResultSet rs1 = this.exeuteSQL(
-						"SELECT avgtime FROM t_battery WHERE battery_id = \'"
-						+ bat + "\'");
-				rs1.next();
-				if(usetime > rs1.getInt(1)){
-					targets.add(target);
-				}
+		List<TargetInfoDto> targets = staffAlertDAO.getTargetsInfoByLBSTraceTable();
+		List<String> alertTargets = new ArrayList<String>();
+		Iterator<TargetInfoDto> it = targets.iterator();
+		while(it.hasNext()){
+			TargetInfoDto ttd = it.next();
+			int usetime = ttd.getTargetUseTime();
+			String bat = ttd.getBattery();
+			String target = ttd.getTargetID();
+			int avgtime = staffAlertDAO.getBatteryLifeByID(bat);
+			if(usetime > avgtime){
+				alertTargets.add(target);
 			}
-			Iterator<String> it = targets.iterator();
-			while(it.hasNext()){
-				ResultSet rs1 = this.exeuteSQL(
-				    "SELECT DISTINCT user_id FROM t_targetmanager WHERE target_id=\'"
-					+ it.next() + "\'");
-				while(rs1.next()){
-					 users.add(rs1.getInt(1));
-				}
-			}
-			Iterator it1 = targets.iterator();
-			Iterator it2 = users.iterator();
-			while(it1.hasNext() && it2.hasNext()){
-				 logger.info("CardBatteryAlert:targetID: " + it1.next() + 
-						 " userID: " + it2.next());
-			}
-			   
-			close();
-			
-		}catch(SQLException e){
-			logger.error("error in checking card battery");
-			e.printStackTrace();
 		}
-		
+		//TODO remove after test
+		Map<String,Integer> targetToUser = staffAlertDAO.getTargetUserByTargetID(alertTargets);
+		Set<String> users = targetToUser.keySet();
+		Iterator<String> it1 = users.iterator();
+		while(it1.hasNext()){
+			String target = it1.next();
+			int user = targetToUser.get(target);
+			logger.info("[CardBatteryAlert] target_id:" + target +
+					"user_id:" + user);	
+		}
+		//sad.alarm(2, 1, targetToUsers);
 		
 	}
 
