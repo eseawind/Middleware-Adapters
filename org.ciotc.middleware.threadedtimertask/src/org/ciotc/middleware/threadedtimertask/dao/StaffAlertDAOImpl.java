@@ -27,6 +27,7 @@ import org.ciotc.middleware.threadedtimertask.AbstractAlert;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 /**
+ * 数据库操作封装类
  * @author ZhangMin.name
  *
  */
@@ -77,6 +78,9 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 			e.printStackTrace();
 		}
 	}
+	/**
+	 * 向t_manageeventlog表中插入告警事件，如果已经被处理则取消插入。
+	 */
 	@Override
 	public void insertEventLog(int eventTypeID, int subEventType, String targetID,
 			int userID) {
@@ -110,6 +114,9 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 			close(conn);
 		}
 	}
+	/**
+	 * 从实时定位表t_lbstracedata中查询正在被定位的target_id
+	 */
 	@Override
 	public List<String> getTargetsFromLBSTraceTable() {
 		List<String> targets = new ArrayList<String>();
@@ -125,12 +132,9 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		}
 		return targets;
 	}
-	@Override
-	public List<String> getLeaveTargetsFromLBSTraceTableByAntennaID(
-			List<String> anntennaIDs) {
-		
-		return null;
-	}
+	/**
+	 * 根据target_id获取Map<target_id,user_id>
+	 */
 	@Override
 	public Map<String, Integer> getTargetUserByTargetID(
 			List<String> targets) {
@@ -157,6 +161,9 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		close(conn);
 		return targetToUser;
 	}
+	/**
+	 * 根据电池类型获得电池估计寿命
+	 */
 	@Override
 	public int getBatteryLifeByID(String battery) {
 		int avgtime = -1;
@@ -172,12 +179,15 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		}
 		return avgtime;
 	}
+	/**
+	 * 根据实时定位表中的target_id获取Target对象
+	 */
 	@Override
 	public List<TargetInfoDto> getTargetsInfoByLBSTraceTable() {
 		List<TargetInfoDto> targets = new ArrayList<TargetInfoDto>();
 		ResultSet rs = this.exeuteSQL(
 				"SELECT * FROM t_target WHERE target_id "+
-				"IN (SELECT DISTINCT target_id FROM t_lbsdata)");
+				"IN (SELECT DISTINCT target_id FROM t_lbstracedata)");
 		try {
 			while(rs.next()){
 				TargetInfoDto ttd = new TargetInfoDto();
@@ -195,6 +205,9 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		}
 		return targets;
 	}
+	/**
+	 * 获取正在被定为对象的UserTargetOrganize属性封装类
+	 */
 	@Override
 	public List<UserTargetOrgnaizeDto> getUTOByLBSTraceTable() {
 		List<UserTargetOrgnaizeDto> utos = 
@@ -227,6 +240,9 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		}
 		return utos;
 	}
+	/**
+	 * 根据target_id和user_id 及事件类型插入告警数据库
+	 */
 	@Override
 	public void alarm(int eventTypeID, int subEventType,
 			Map<String, Integer> targetToUsers) {
@@ -244,6 +260,9 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		}
 		
 	}
+	/**
+	 * 从t_lbstracedata中获取当前正在被追踪定位的对象
+	 */
 	@Override
 	public List<TracingTargetDto> getTracingTargetsByLBSTraceTable() {
 		List<TracingTargetDto> tts = new ArrayList<TracingTargetDto>();
@@ -265,6 +284,9 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		}
 		return tts;
 	}
+	/**
+	 * 根据antenna_id 和进去标志elflag查询当前定位对象中在要离开的定位对象
+	 */
 	@Override
 	public List<TracingTargetDto> getLeavingTracingTargetByAntennaID(
 			String antennaID) {
@@ -289,6 +311,9 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		}
 		return tts;
 	}
+	/**
+	 * 根据设备类型从表t_antenna中获取antenna_id
+	 */
 	@Override
 	public String getAntennaIDByDevice(int deviceType) {
 		String antenna = null;

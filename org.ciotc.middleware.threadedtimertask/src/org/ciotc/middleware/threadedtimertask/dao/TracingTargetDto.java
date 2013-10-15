@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
+ * t_lbstracedata 属性封装类
  * @author ZhangMin.name
  *
  */

@@ -44,7 +44,7 @@ public class EnvSensorTimerTask extends TimerTask{
 		Object[] result = null;
 		try{
 			int i = 2;
-			result = client.invoke("GetData", i);
+			result = client.invoke("GetData2", i);
 			 
 			if(result != null && !"".equals(result)){
 				System.out.println("Result: " + result[0].toString());

@@ -98,6 +98,8 @@
 		<property name="targetMethod" value="runAlertJob"></property>
 		<property name="concurrent" value="false"></property>
 	</bean>	
+	
+	
 	<!-- 管理类Scheduler配置 -->
 	<bean id="alertScheduler" 
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">

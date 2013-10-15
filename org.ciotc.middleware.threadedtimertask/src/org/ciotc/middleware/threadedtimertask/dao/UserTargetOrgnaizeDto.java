@@ -3,6 +3,11 @@ package org.ciotc.middleware.threadedtimertask.dao;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+/**
+ * t_usertargetorgaize 属性封装类
+ * @author ZhangMin.name
+ *
+ */
 public class UserTargetOrgnaizeDto implements Serializable {
 
 	private static final long serialVersionUID = 1L;
