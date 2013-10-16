@@ -33,7 +33,7 @@ import org.ciotc.middleware.adapter.positioning.util.NameSpace;
 })
 
 public class PositioningData {
-	/** 定位器号 */
+	/** 定位卡号 */
 	@XmlElement(required = true,namespace=NameSpace.SMSG_URI)
 	private String cardID;
 	/** 阅读器（基站）号 */

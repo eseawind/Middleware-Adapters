@@ -7,6 +7,8 @@
  */
 package org.ciotc.middleware.adapter.envsensor;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.TimerTask;
 
@@ -37,34 +39,29 @@ public class EnvSensorTimerTask extends TimerTask{
     
 	@Override
 	public void run() {
-		System.out.println(" EnvSensorTimerTask start ");
-		
-		JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
-	    Client client = dcf.createClient(wsdl);
-		Object[] result = null;
+		System.out.println(" EnvSensorTimerTask started ");
 		try{
+			JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
+			Client client = dcf.createClient(wsdl);
+			Object[] result = null;
 			int i = 2;
-			result = client.invoke("GetData2", i);
+			result = client.invoke("GetData", i);
 			 
 			if(result != null && !"".equals(result)){
+				//TODO remove after test
 				System.out.println("Result: " + result[0].toString());
+				FileOutputStream fos = new FileOutputStream(new File("C:/result.txt"));
+				fos.write(result[0].toString().getBytes());
 				
+				MessageDto msgDto = new MessageDto();
+				msgDto.setReaderID(sensor.getID());
+				msgDto.setSequence("0");
+				msgDto.setXmlData(result[0].toString());
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.warn("A error occured in this thread");
 		}
 		
-		MessageDto msgDto = new MessageDto();
-		msgDto.setReaderID(sensor.getID());
-		msgDto.setSequence("0");
-		try {
-			//msgDto.setXmlData(Convertor.objToXml(pm25Value, PM25Value.class));
-			//debug
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//sensor.send(msgDto);
+		
 	}
 }
