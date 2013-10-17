@@ -21,10 +21,13 @@
 		<property name="username" value="${org.ciotc.middleware.jdbc.user}" />
 		<property name="password" value="${org.ciotc.middleware.jdbc.pass}" />
 	</bean>
-<!-- 	<bean id="staffAlertDAOImpl" class="Open Declaration org.ciotc.middleware.adapter.positioning.util.StaffAlertDAOImpl"> -->
-<!-- 		<property name="dataSource" ref="datasource" /> -->
-<!-- 	</bean> -->
 	
+	<bean id="staffAlertDAOImpl" class="org.ciotc.middleware.adapter.positioning.util.StaffAlertDAOImpl">
+		<property name="dataSource" ref="datasource" />
+	</bean>
+	<bean id="staffLeaveDetector" class="org.ciotc.middleware.adapter.positioning.util.StaffLeaveDetector">
+		<property name="staffAlertDAO" ref="staffAlertDAOImpl" />
+	</bean>
 	
 	<!--  Create Reader Configuration Factory -->
 	<bean id="PositioningSensorFactory" class="org.ciotc.middleware.adapter.positioning.PositioningSensorFactory">

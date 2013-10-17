@@ -8,6 +8,7 @@
 package org.ciotc.middleware.adapter.positioning.util;
 
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,21 +18,26 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ciotc.middleware.notification.StaffMessageDto;
 
+
 /**
  * @author ZhangMin.name
  *
  */
 public class StaffLeaveDetector implements Runnable{
 	private static final Log logingData = LogFactory.getLog("positiondata");
-	private static Map<String,Long> tracingTargets
-		= new HashMap<String,Long>();
-	public static void add(StaffMessageDto smd){
-		String cardID = smd.getCardID();
+	private static Map<StaffMessageDto,Long> tracingTargets
+		= Collections.synchronizedMap(new HashMap<StaffMessageDto,Long>());
+	private static final Log logger = LogFactory.getLog(StaffLeaveDetector.class);
+	protected StaffAlertDAO staffAlertDAO;
+	public void setStaffAlertDAO(StaffAlertDAO staffAlertDAO){
+		this.staffAlertDAO = staffAlertDAO;
+	}
+	public static synchronized void add(StaffMessageDto smd){
 		tracingTargets.put(
-					cardID, System.currentTimeMillis());	
+					smd, System.currentTimeMillis());	
 		
 	}
-	public static Map<String, Long> getTracingTargets() {
+	public static Map<StaffMessageDto, Long> getTracingTargets() {
 		return tracingTargets;
 	}
 	/**
@@ -43,15 +49,16 @@ public class StaffLeaveDetector implements Runnable{
 	}
 	@Override
 	public void run() {
-		Set<String> keys = tracingTargets.keySet();
-		Iterator<String> it = keys.iterator();
+		Set<StaffMessageDto> keys = tracingTargets.keySet();
+		Iterator<StaffMessageDto> it = keys.iterator();
 		while(it.hasNext()){
-			String cardID = it.next();
-			Long last = tracingTargets.get(cardID);
-			if((System.currentTimeMillis() - last) > 5 * 1000){
+			StaffMessageDto smd = it.next();
+			Long last = tracingTargets.get(smd);
+			if((System.currentTimeMillis() - last) > 10 * 1000){
 				//Leaving
-				logingData.info(cardID + " has left the Tracing area");
-				tracingTargets.remove(cardID);
+				logingData.info(smd.getCardID() + " has left the Tracing area");
+				//staffAlertDAO.updateEnterLeaveInfo(smd);
+				tracingTargets.remove(smd);
 			}
 		}
 	}
