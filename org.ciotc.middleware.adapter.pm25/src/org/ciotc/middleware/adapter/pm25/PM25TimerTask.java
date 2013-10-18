@@ -9,9 +9,6 @@ package org.ciotc.middleware.adapter.pm25;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimerTask;
-import java.util.logging.Logger;
-
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.endpoint.Client;
@@ -62,10 +59,9 @@ public class PM25TimerTask extends TimerTask{
 				pm25 = Integer.parseInt(result[0].toString());
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.warn("Retrieve PM2.5 failed it will remain unchanged.");
 		}
-		//For Debug
-		System.out.println(new Date()+" getPM25Value response: " + pm25);
+		
 		if(pm25 < this.minValue){
 			pm25 = this.minValue;
 		}else if(pm25 > this.maxValue){
@@ -80,11 +76,10 @@ public class PM25TimerTask extends TimerTask{
 		msgDto.setSequence("0");
 		try {
 			msgDto.setXmlData(Convertor.objToXml(pm25Value, PM25Value.class));
-			//debug
-			logger.info("PM25 value after processing: " + Convertor.objToXml(pm25Value, PM25Value.class));
+			logger.debug("PM25 value after processing: " 
+			+ Convertor.objToXml(pm25Value, PM25Value.class));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("PM2.5 Value to xml failed,will recovered when next thread started.");
 		}
 		
 		sensor.send(msgDto);

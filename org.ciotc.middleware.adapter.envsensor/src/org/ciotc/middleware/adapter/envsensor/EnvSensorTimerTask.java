@@ -49,17 +49,17 @@ public class EnvSensorTimerTask extends TimerTask{
 			 
 			if(result != null && !"".equals(result)){
 				//TODO remove after test
-				System.out.println("Result: " + result[0].toString());
-				FileOutputStream fos = new FileOutputStream(new File("C:/result.txt"));
-				fos.write(result[0].toString().getBytes());
-				
+				//System.out.println("Result: " + result[0].toString());
+				//FileOutputStream fos = new FileOutputStream(new File("C:/result.txt"));
+				//fos.write(result[0].toString().getBytes());
 				MessageDto msgDto = new MessageDto();
 				msgDto.setReaderID(sensor.getID());
 				msgDto.setSequence("0");
 				msgDto.setXmlData(result[0].toString());
+				sensor.send(msgDto);
 			}
 		}catch(Exception e){
-			logger.warn("A error occured in this thread");
+			logger.warn("A error occured while retrieving sensor data.While recovered soon");
 		}
 		
 		
