@@ -78,6 +78,8 @@ public class PM25TimerTask extends TimerTask{
 			msgDto.setXmlData(Convertor.objToXml(pm25Value, PM25Value.class));
 			logger.debug("PM25 value after processing: " 
 			+ Convertor.objToXml(pm25Value, PM25Value.class));
+			//Remove after test
+			System.out.println("PM25: " + Convertor.objToXml(pm25Value, PM25Value.class));
 		} catch (Exception e) {
 			logger.warn("PM2.5 Value to xml failed,will recovered when next thread started.");
 		}

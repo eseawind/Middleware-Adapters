@@ -74,10 +74,7 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 							+ ";Receive timestamp:" + new Date());
 					sensor.sendEvent(smd);
 					//检测人员离开
-					StaffLeaveDetector.add(smd);
-					StaffLeaveDetector slf = new StaffLeaveDetector();
-					slf.run();
-
+					StaffLeaveDetector.put(smd);
 					//发送心跳包维持连接
 					IoBuffer resp = IoBuffer.wrap(GwMessage.makeHeartBeat());
 					session.write(resp);
@@ -98,13 +95,6 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 			throws Exception {
 		// TODO Auto-generated method stub
 		super.sessionIdle(session, status);
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		
 	}
 
 }

@@ -3,12 +3,14 @@ package org.ciotc.middleware.adapter.positioning;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Timer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanInfo;
 
+import org.ciotc.middleware.adapter.positioning.util.StaffLeaveDetector;
 import org.ciotc.middleware.configuration.AnnotationMBeanInfoStrategy;
 import org.ciotc.middleware.configuration.JMXMBean;
 import org.ciotc.middleware.configuration.Property;
@@ -23,11 +25,12 @@ import org.rifidi.edge.api.SessionDTO;
 @JMXMBean
 public class PositioningSensor extends AbstractSensor<PositioningSensorSession> {
 	private Integer port = Integer.valueOf(5002);
-	private String host = "127.0.0.1";
+	private String host = "192.168.109.203";
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	private String displayName = "PositioningSensor";
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	private AtomicReference<PositioningSensorSession> session = new AtomicReference();
+	private Timer timer = null;
 	public static final MBeanInfo mbeaninfo;
 
 	static {
@@ -46,6 +49,9 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 					super.getID(), this.host,this.port.intValue(), new HashSet()))) {
 				this.notifierService.addSessionEvent(getID(), 
 						Integer.toString(sessionID.intValue()));
+				//启动后台线程检测人员离开
+				timer = new Timer(true);
+				timer.schedule(new StaffLeaveDetector(),0, 3000);
 				return sessionID.toString();
 			}
 		}
@@ -61,6 +67,9 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 					super.getID(), this.host,this.port.intValue(), new HashSet()))) {
 				this.notifierService.addSessionEvent(getID(), 
 						Integer.toString(sessionID.intValue()));
+				//启动后台线程检测人员离开
+				timer = new Timer(true);
+				timer.schedule(new StaffLeaveDetector(),0, 3000);
 				return sessionID.toString();
 			}
 		}
@@ -77,6 +86,8 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 	      positioningSensorSession.disconnect();
 
 	      this.notifierService.removeSessionEvent(getID(), id);
+	      //停止后台任务
+	      timer.cancel();
 	    } else {
 	      String error = "Tried to delete a non existend session: " + id;
 	      throw new CannotDestroySensorException(error);
@@ -116,7 +127,7 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 	@Property(displayName = "Host",
 			description = "The host that the reader will listen for incoming connections from.",
 			writable = true,type = PropertyType.PT_STRING,category = "connection",
-			defaultValue = "127.0.0.1",
+			defaultValue = "192.168.109.203",
 			orderValue = 1.0F,maxValue = "",minValue = "")
 	public String getHost() {
 		return host;

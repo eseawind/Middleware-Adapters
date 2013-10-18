@@ -48,15 +48,23 @@ public class EnvSensorTimerTask extends TimerTask{
 			result = client.invoke("GetData", i);
 			 
 			if(result != null && !"".equals(result)){
-				//TODO remove after test
-				//System.out.println("Result: " + result[0].toString());
-				//FileOutputStream fos = new FileOutputStream(new File("C:/result.txt"));
-				//fos.write(result[0].toString().getBytes());
 				MessageDto msgDto = new MessageDto();
 				msgDto.setReaderID(sensor.getID());
 				msgDto.setSequence("0");
-				msgDto.setXmlData(result[0].toString());
-				sensor.send(msgDto);
+				StringBuffer sb = new StringBuffer();
+				sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+				sb.append("\n");
+                sb.append("<EnvSensorData xmlns=\"http://ciotc.org/wsn/Sensor/msg\" ");
+                sb.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
+                sb.append("xsi:schemaLocation=\"http://ciotc.org/wsn/Sensor/msg SensorMessage.xsd\">");
+                sb.append("\n");
+                sb.append(result[0].toString());
+                sb.append("\n");
+                sb.append("</EnvSensorData>");
+                msgDto.setXmlData(sb.toString());
+               //TODO remove after test
+				System.out.println("EnvSensor Data:\n " + sb.toString());
+			    sensor.send(msgDto);
 			}
 		}catch(Exception e){
 			logger.warn("A error occured while retrieving sensor data.While recovered soon");

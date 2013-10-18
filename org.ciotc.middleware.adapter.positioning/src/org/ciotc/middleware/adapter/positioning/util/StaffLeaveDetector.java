@@ -7,12 +7,15 @@
  */
 package org.ciotc.middleware.adapter.positioning.util;
 
+import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.Collections;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,42 +26,35 @@ import org.ciotc.middleware.notification.StaffMessageDto;
  * @author ZhangMin.name
  *
  */
-public class StaffLeaveDetector implements Runnable{
+public class StaffLeaveDetector extends TimerTask {
+	private static Map<String,Long> tracingTargets
+			= new HashMap<String,Long>();
 	private static final Log logingData = LogFactory.getLog("positiondata");
-	private static Map<StaffMessageDto,Long> tracingTargets
-		= Collections.synchronizedMap(new HashMap<StaffMessageDto,Long>());
 	private static final Log logger = LogFactory.getLog(StaffLeaveDetector.class);
 	protected StaffAlertDAO staffAlertDAO;
 	public void setStaffAlertDAO(StaffAlertDAO staffAlertDAO){
 		this.staffAlertDAO = staffAlertDAO;
 	}
-	public static synchronized void add(StaffMessageDto smd){
-		tracingTargets.put(
-					smd, System.currentTimeMillis());	
-		
+	public static void put(StaffMessageDto smd){
+		synchronized(tracingTargets){
+			
+			tracingTargets.put(smd.getCardID(), System.currentTimeMillis());
+		}
 	}
-	public static Map<StaffMessageDto, Long> getTracingTargets() {
-		return tracingTargets;
-	}
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-	@Override
 	public void run() {
-		Set<StaffMessageDto> keys = tracingTargets.keySet();
-		Iterator<StaffMessageDto> it = keys.iterator();
+		logingData.info("Staff Leave detector timer task started.");
+		Map <String,Long> targets = tracingTargets;
+		Set<String> keys = targets.keySet();
+		Iterator<String> it = keys.iterator();
 		while(it.hasNext()){
-			StaffMessageDto smd = it.next();
-			Long last = tracingTargets.get(smd);
-			if((System.currentTimeMillis() - last) > 10 * 1000){
+			String cardID = it.next();
+			long last = targets.get(cardID);
+			long now = System.currentTimeMillis();
+			if((now - last) > 3 * 1000){
 				//Leaving
-				logingData.info(smd.getCardID() + " has left the Tracing area");
+				logingData.info(cardID + " has left,time:" + last);
 				//staffAlertDAO.updateEnterLeaveInfo(smd);
-				tracingTargets.remove(smd);
+				it.remove();
 			}
 		}
 	}
