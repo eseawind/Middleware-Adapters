@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanInfo;
-
 import org.ciotc.middleware.adapter.positioning.util.StaffLeaveDetector;
 import org.ciotc.middleware.configuration.AnnotationMBeanInfoStrategy;
 import org.ciotc.middleware.configuration.JMXMBean;
@@ -32,7 +31,8 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 	private AtomicReference<PositioningSensorSession> session = new AtomicReference();
 	private Timer timer = null;
 	public static final MBeanInfo mbeaninfo;
-
+	private volatile StaffLeaveDetector staffLeaveDetector;
+	
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
 		mbeaninfo = strategy.getMBeanInfo(PositioningSensor.class);
@@ -50,8 +50,8 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 				this.notifierService.addSessionEvent(getID(), 
 						Integer.toString(sessionID.intValue()));
 				//启动后台线程检测人员离开
-				timer = new Timer(true);
-				timer.schedule(new StaffLeaveDetector(),0, 3000);
+				//timer = new Timer(true);
+				//timer.schedule(staffLeaveDetector,0, 3000);
 				return sessionID.toString();
 			}
 		}
@@ -68,8 +68,8 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 				this.notifierService.addSessionEvent(getID(), 
 						Integer.toString(sessionID.intValue()));
 				//启动后台线程检测人员离开
-				timer = new Timer(true);
-				timer.schedule(new StaffLeaveDetector(),0, 3000);
+				//timer = new Timer(true);
+				//timer.schedule(new StaffLeaveDetector(),0, 3000);
 				return sessionID.toString();
 			}
 		}
@@ -87,7 +87,7 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 
 	      this.notifierService.removeSessionEvent(getID(), id);
 	      //停止后台任务
-	      timer.cancel();
+	      //timer.cancel();
 	    } else {
 	      String error = "Tried to delete a non existend session: " + id;
 	      throw new CannotDestroySensorException(error);
@@ -146,6 +146,10 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 
 	public void setPort(Integer port) {
 		this.port = port;
+	}
+	
+	public void setStaffLeaveDetector(StaffLeaveDetector sad){
+		this.staffLeaveDetector = sad;
 	}
 	
 }

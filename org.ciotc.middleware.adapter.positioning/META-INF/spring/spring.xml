@@ -5,7 +5,7 @@
     http://www.springframework.org/schema/osgi 
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
- 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+ <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<value>classpath:META-INF/spring/alert.properties
 			</value>
@@ -15,18 +15,22 @@
 		</property>
 	</bean>
 
-	<bean id="datasource" 
-		class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+	<bean id="datasource1" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
 		<property name="driverClass" value="${org.ciotc.middleware.jdbc.driver}" />
 		<property name="url" value="${org.ciotc.middleware.jdbc.url}" />
 		<property name="username" value="${org.ciotc.middleware.jdbc.user}" />
 		<property name="password" value="${org.ciotc.middleware.jdbc.pass}" />
 	</bean>
-	
-	<bean id="staffAlertDAOImpl" 
-		class="org.ciotc.middleware.adapter.positioning.util.StaffAlertDAOImpl">
-		<property name="dataSource" ref="datasource" />
+	<bean id="staffAlertDAOImpl" class="org.ciotc.middleware.adapter.positioning.util.StaffAlertDAOImpl">
+		<property name="dataSource" ref="datasource1" />
 	</bean>
+	
+	<!-- CardLeavingAlertyAlert定时任务配置 -->
+	<bean id="staffLeaveAlert"
+		class="org.ciotc.middleware.adapter.positioning.util.StaffLeaveDetector">
+		<property name="staffAlertDAO" ref="staffAlertDAOImpl" />
+	</bean>
+	
 	
 	<!--  Create Reader Configuration Factory -->
 	<bean id="PositioningSensorFactory" class="org.ciotc.middleware.adapter.positioning.PositioningSensorFactory">

@@ -13,7 +13,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -341,41 +343,70 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	@Override
 	public void updateEnterLeaveInfo(StaffMessageDto smd) {
 		Connection conn = this.getConnection();
+		
+		
 		try {
+			Statement stmt1 = conn.createStatement();
+			ResultSet rs1 = stmt1.executeQuery(
+					"SELECT count(target_id) FROM t_enterleaveinfo WHERE target_id = \'" 
+							+ smd.getCardID() + "\'");
+			rs1.next();
 			conn.setAutoCommit(false);
-			String targetID = smd.getCardID();
-	        Statement stmt = conn.createStatement();
-	        UserTargetOrgnaizeDto uto = this.getUTOByTargetID(targetID);
-	        StringBuffer sql = new StringBuffer();
-	        sql.append("INSERT INTO t_enterleaveinfo(user_id,organize_id,target_id," +
-    		"target_code,validdate,distributestatue,distributetime," +
-            "recyclestatue,recycletime,eltype,eltime) VALUES( ");
-	        sql.append(uto.getUserID()).append(",");
-	        sql.append(uto.getOrganizeID()).append(",");
-	        sql.append(uto.getTargetID()).append(",");
-	        sql.append(uto.getTargetCode()).append(",");
-	        sql.append(uto.getValidDate()).append(",");
-	        sql.append(uto.getDistributeStatus()).append(",");
-	        sql.append(uto.getDistributeTime()).append(",");
-	        sql.append(uto.getRecycleStatus()).append(",");
-	        sql.append(uto.getRecycleTime()).append(",");
-	        sql.append("0").append(",").append(smd.getTime());
-	        sql.append(" )");
-	        int status = stmt.executeUpdate(sql.toString());
-	        if(status == 1){
+			if(rs1.getInt(1) == 0){
+				String targetID = smd.getCardID();
+				Statement stmt = conn.createStatement();
+				UserTargetOrgnaizeDto uto = this.getUTOByTargetID(targetID);
+				StringBuffer sql = new StringBuffer();
+				sql.append(
+						"INSERT INTO t_enterleaveinfo(user_id,organize_id,target_id,");
+				sql.append("target_code,validdate,distributestatue,distributetime,");
+				sql.append("recyclestatue,recycletime,eltype,eltime)VALUES( " );
+				sql.append(uto.getUserID()).append(",");
+				sql.append(uto.getOrganizeID()).append(",");
+				sql.append(uto.getTargetID()).append(",");
+				sql.append(uto.getTargetCode()).append(",");
+				sql.append(sT(uto.getValidDate())).append(",");
+				sql.append(uto.getDistributeStatus()).append(",");
+				sql.append(sT(uto.getDistributeTime())).append(",");
+				sql.append(uto.getRecycleStatus()).append(",");
+				sql.append(sT(uto.getRecycleTime())).append(",");
+				sql.append("0").append(",\'").append(smd.getTime());
+				sql.append("\')");
+				//System.out.println("SQL :" + sql.toString());
+				int status = stmt.executeUpdate(sql.toString());
+				if(status == 1){
 	        	stmt.executeUpdate(
-	        			"DELETE FROM t_lbstracedata WHERE target_id = " +
-	        	        smd.getCardID());
-	        }
-	        conn.commit();
+	        			"DELETE FROM t_lbstracedata WHERE target_id = \'" +
+	        	        smd.getCardID() +"\'");
+				}
+			}else{
+				stmt1.executeUpdate(
+        			"DELETE FROM t_lbstracedata WHERE target_id = \'" +
+        	        smd.getCardID() +"\'");
+			}
+			conn.commit();
 	        		
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
 		}
-	    
 		close(conn);
 		
+	}
+	/**
+	 * 将一个Timestamp对象格式化为 'yyyy-MM-dd HH:mm:ss',
+	 * 用于数据中数据的插入
+	 * 因为Timestamp自带方法均已被废弃
+	 * @param ts
+	 * @return
+	 */
+	public String sT(Timestamp ts){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(ts.getTime());
+		StringBuffer sb = new StringBuffer();
+		sb.append("\'").append(sdf.format(c.getTime())).append("\'");
+		return sb.toString();
 	}
 	/*
 	 * 根据target_id 获取UserTargetOrganizeDto
@@ -385,7 +416,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		UserTargetOrgnaizeDto uto = new UserTargetOrgnaizeDto();
 		ResultSet rs = this.exeuteSQL(
 				"SELECT * FROM T_UserTargetOrgnaize" +
-				" Where target_id = " + targetID);
+				" Where target_id = \'" + targetID + "\'");
 		try {
 			while(rs.next()){
 				uto.setUserID(rs.getInt("user_id"));
@@ -401,7 +432,6 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				uto.setReason(rs.getString("reason"));
 				uto.setOperaterID(rs.getInt("operater_id"));
 				uto.setUsertypeID(rs.getInt("usertype_id"));
-			
 			}
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");

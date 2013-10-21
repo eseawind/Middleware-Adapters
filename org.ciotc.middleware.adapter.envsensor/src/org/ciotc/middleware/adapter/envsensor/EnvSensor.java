@@ -21,7 +21,7 @@ import org.rifidi.edge.api.SessionDTO;
 
 @JMXMBean
 public class EnvSensor extends AbstractSensor<EnvSensorSession> {
-	private volatile String wsdlUrl = "http://122.193.182.20:1212/Service1.asmx?wsdl";
+	private volatile String wsdlUrl = "http://159.226.228.92:1009/Service1.asmx?wsdl";
 	private Integer delayTime = Integer.valueOf(10);
 	private Integer intervalTime = Integer.valueOf(60);
 	private AtomicInteger sessionID = new AtomicInteger(0);
@@ -109,7 +109,7 @@ public class EnvSensor extends AbstractSensor<EnvSensorSession> {
 	@Property(displayName = "WSDL URL",
 			description = "WSDL URL of the PM25 Sensor Web Service Server",
 			writable = true,type = PropertyType.PT_STRING,category = "connection",
-			defaultValue = "http://122.193.182.20:1212/Service1.asmx?wsdl",
+			defaultValue = "http://159.226.228.92:1009/Service1.asmx?wsdl",
 			orderValue = 1.0F,maxValue = "",minValue = "")
     public String getWsdlUrl(){
 		return wsdlUrl;

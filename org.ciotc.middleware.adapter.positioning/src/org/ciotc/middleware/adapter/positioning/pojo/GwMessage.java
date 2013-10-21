@@ -169,7 +169,7 @@ public class GwMessage {
 //			.append(":").append((int)b[2]);	
 			
 			int year = (int)b[0];
-			int month = (int)b[1];
+			int month = (int)b[1] - 1;
 			int day = (int)b[2];
 			int hh = (int)b[3];
 			int mm = (int)b[4];

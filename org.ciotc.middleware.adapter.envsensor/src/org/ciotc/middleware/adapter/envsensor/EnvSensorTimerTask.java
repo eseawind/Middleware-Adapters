@@ -62,12 +62,12 @@ public class EnvSensorTimerTask extends TimerTask{
                 sb.append("\n");
                 sb.append("</EnvSensorData>");
                 msgDto.setXmlData(sb.toString());
-               //TODO remove after test
-				System.out.println("EnvSensor Data:\n " + sb.toString());
+                //TODO remove after test
+				logger.info("EnvSensor Data:\n " + sb.toString());
 			    sensor.send(msgDto);
 			}
 		}catch(Exception e){
-			logger.warn("A error occured while retrieving sensor data.While recovered soon");
+			logger.warn("A error occured while retrieving sensor data.Will recovered soon");
 		}
 		
 		

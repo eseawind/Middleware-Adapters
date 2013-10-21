@@ -59,7 +59,7 @@ public class PM25TimerTask extends TimerTask{
 				pm25 = Integer.parseInt(result[0].toString());
 			}
 		}catch(Exception e){
-			logger.warn("Retrieve PM2.5 failed it will remain unchanged.");
+			logger.warn("Retrieve PM2.5 value failed,it will remain unchanged.");
 		}
 		
 		if(pm25 < this.minValue){
@@ -76,7 +76,7 @@ public class PM25TimerTask extends TimerTask{
 		msgDto.setSequence("0");
 		try {
 			msgDto.setXmlData(Convertor.objToXml(pm25Value, PM25Value.class));
-			logger.debug("PM25 value after processing: " 
+			logger.info("PM25 value after processing: " 
 			+ Convertor.objToXml(pm25Value, PM25Value.class));
 			//Remove after test
 			System.out.println("PM25: " + Convertor.objToXml(pm25Value, PM25Value.class));
