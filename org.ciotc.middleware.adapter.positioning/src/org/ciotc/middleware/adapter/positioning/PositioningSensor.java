@@ -29,9 +29,9 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 	private String displayName = "PositioningSensor";
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	private AtomicReference<PositioningSensorSession> session = new AtomicReference();
-	private Timer timer = null;
+	//private Timer timer = null;
 	public static final MBeanInfo mbeaninfo;
-	private volatile StaffLeaveDetector staffLeaveDetector;
+	//private volatile StaffLeaveDetector staffLeaveDetector;
 	
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
@@ -147,9 +147,5 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 	public void setPort(Integer port) {
 		this.port = port;
 	}
-	
-	public void setStaffLeaveDetector(StaffLeaveDetector sad){
-		this.staffLeaveDetector = sad;
-	}
-	
+
 }

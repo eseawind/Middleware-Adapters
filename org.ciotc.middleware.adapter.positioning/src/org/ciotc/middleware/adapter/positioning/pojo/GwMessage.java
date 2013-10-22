@@ -79,7 +79,7 @@ public class GwMessage {
 			System.arraycopy(oData, 1, tmp, 0, tmp.length);
 			byte[] temp = unEscape(tmp);
 			//debug
-			System.out.println("Parsing data:" + dump(temp));
+			//System.out.println("Parsing data:" + dump(temp));
 			if(temp[0] == GwMessage.MT_LOCATION){
 				byte[] id = new byte[4];
 				byte[] time = new byte[8];

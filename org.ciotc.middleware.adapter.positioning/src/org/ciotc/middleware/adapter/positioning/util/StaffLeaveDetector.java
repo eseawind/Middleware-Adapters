@@ -71,7 +71,7 @@ public class StaffLeaveDetector extends TimerTask {
 		}
 		StaffMessageDto test = new StaffMessageDto();
 		test.setAntennID("0");
-		test.setCardID("7777");
+		test.setCardID("9004");
 		test.setTime("2013-10-18 19:11:11");
 		test.setBaseID("172");
 		staffAlertDAO.updateEnterLeaveInfo(test);
@@ -103,7 +103,7 @@ public class StaffLeaveDetector extends TimerTask {
 		}
 			StaffMessageDto test = new StaffMessageDto();
 				test.setAntennID("0");
-				test.setCardID("7777");
+				test.setCardID("9004");
 				test.setTime("2013-10-18 19:11:11");
 				test.setBaseID("172");
 				staffAlertDAO.updateEnterLeaveInfo(test);
