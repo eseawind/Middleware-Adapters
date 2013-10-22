@@ -15,6 +15,8 @@ Import-Package: org.apache.commons.logging;version="1.1.1",
  org.eclipse.osgi.framework.console;version="1.1.0",
  org.osgi.framework;version="1.7.0",
  org.rifidi.edge.api,
+ org.springframework.beans;version="3.1.2.RELEASE",
+ org.springframework.beans.factory;version="3.1.2.RELEASE",
  org.springframework.beans.factory.config;version="2.5.5",
  org.springframework.core;version="3.1.2.RELEASE",
  org.springframework.jdbc.datasource;version="3.1.2.RELEASE"

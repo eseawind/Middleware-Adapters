@@ -408,6 +408,20 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		sb.append("\'").append(sdf.format(c.getTime())).append("\'");
 		return sb.toString();
 	}
+	/**
+	 * 将一个Timestamp对象格式化为 yyyy-MM-dd HH:mm:ss,
+	 * 因为Timestamp自带方法均已被废弃
+	 * @param ts
+	 * @return
+	 */
+	public static String tsToString(Timestamp ts){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(ts.getTime());
+		StringBuffer sb = new StringBuffer();
+		sb.append(sdf.format(c.getTime()));
+		return sb.toString();
+	}
 	/*
 	 * 根据target_id 获取UserTargetOrganizeDto
 	 */

@@ -28,7 +28,8 @@
 	<!-- StaffLeaveAlertAlert定时任务配置 -->
 	<bean id="staffLeaveAlert"
 		class="org.ciotc.middleware.adapter.positioning.util.StaffLeaveDetector">
-		<property name="staffAlertDAO" ref="staffAlertDAOImpl" />
+		<constructor-arg ref="staffAlertDAOImpl"/>
+<!-- 		<property name="staffAlertDAO" ref="staffAlertDAOImpl" /> -->
 	</bean>
 	<bean id="staffLeaveAlertTrigger" 
 		class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -43,14 +44,14 @@
 		<property name="concurrent" value="false"></property>
 	</bean>	
 	<!-- 管理类Scheduler配置 -->
-	<bean id="staffLeaveAlertScheduler" 
+	<bean id="staffLeaveAlertScheduler"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
 				<ref bean="staffLeaveAlertTrigger"></ref>
 			</list>
 		</property>
-		<property name="autoStartup" value="true"></property>
+		<property name="autoStartup" value="false"></property>
 	</bean>
 	
 	<!--  Create Reader Configuration Factory -->
