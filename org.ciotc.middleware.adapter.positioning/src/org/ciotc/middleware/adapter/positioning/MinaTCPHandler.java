@@ -64,9 +64,9 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 				//System.out.println("Packet data before parse:" + sb.toString());
 				StaffMessageDto smd = GwMessage.parsePacket(GwMessage
 						.hexToBytes(sb.toString()));
-				if (null != smd && smd.getAntennID() != null 
-						&& smd.getBaseID() != null 
-						&& smd.getCardID() != null) {
+				if (null != smd && smd.getAntennID() != null ){
+						//&& smd.getBaseID() != null 
+						//&& smd.getCardID() != null) {
 					logingData.info("AntennID: " + smd.getAntennID()
 							+ " ;BaseID: " + smd.getBaseID() + " ;CardID: " 
 							+ smd.getCardID()
@@ -74,13 +74,13 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 							+ ";Receive timestamp:" + new Date());
 					sensor.sendEvent(smd);
 					//检测人员离开
-					//StaffLeaveDetector.put(smd);
+					StaffLeaveDetector.put(smd);
 					//发送心跳包维持连接
 					IoBuffer resp = IoBuffer.wrap(GwMessage.makeHeartBeat());
 					session.write(resp);
-					logger.info("response heartbeat packet send.");
+					//logger.info("response heartbeat packet send.");
 				} else {
-					logger.info("heartbeat packet received: " + sb.toString());
+					//logger.info("heartbeat packet received: " + sb.toString());
 				}
 			}else{
 				sb.append(tmp);

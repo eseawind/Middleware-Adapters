@@ -10,16 +10,20 @@ import org.ciotc.middleware.exceptions.InvalidStateException;
 import org.ciotc.middleware.notification.NotifierService;
 import org.ciotc.middleware.sensors.AbstractCommandConfiguration;
 import org.ciotc.middleware.sensors.AbstractSensorFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-public class PositioningSensorFactory extends AbstractSensorFactory<PositioningSensor> {
+public class PositioningSensorFactory extends AbstractSensorFactory<PositioningSensor>
+									 implements ApplicationContextAware{
 
 	public static final String FACTORY_ID = "PositioningSensor";
 	private static final String description = "A PositioningSensor Middlerware Adapter.  ";
 	private static final String displayname = "PositioningSensor";
 	private volatile NotifierService notifierService;
 	private volatile StaffLeaveDetector staffLeaveDetector;
-	
+	private ApplicationContext context;
 	public void setStaffLeaveDetector(StaffLeaveDetector sld){
 		this.staffLeaveDetector = sld;
 	}
@@ -60,6 +64,7 @@ public class PositioningSensorFactory extends AbstractSensorFactory<PositioningS
 		instance.setNotifiyService(this.notifierService);
 		instance.register(getContext(), "PositioningSensor");
 		//instance.setStaffLeaveDetector(staffLeaveDetector);
+		instance.setContext(context);
 		
 	}
 
@@ -70,5 +75,12 @@ public class PositioningSensorFactory extends AbstractSensorFactory<PositioningS
 	public MBeanInfo getServiceDescription(String factoryID) {
 		return PositioningSensor.mbeaninfo;
 	}
+	@Override
+	public void setApplicationContext(ApplicationContext context)
+			throws BeansException {
+		this.context = context;
+		
+	}
+	
 
 }
