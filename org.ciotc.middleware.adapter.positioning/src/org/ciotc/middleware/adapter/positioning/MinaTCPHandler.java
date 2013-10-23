@@ -26,7 +26,7 @@ import org.ciotc.middleware.sensors.Sensor;
  *
  */
 public class MinaTCPHandler extends IoHandlerAdapter{
-	private static final Log logingData = LogFactory.getLog("positiondata");
+	private static final Log logingData = LogFactory.getLog("adapter.positiondata");
 	private static final Log logger = LogFactory.getLog(MinaTCPHandler.class);
 	private static String readerID;
 	private static Sensor sensor;
@@ -41,7 +41,7 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 	public void exceptionCaught(IoSession session, Throwable cause)
 			throws Exception {
 		//cause.printStackTrace();
-		logger.error("connection interrupt!");
+		//logger.error("connection interrupt!");
 		
 	}
 

@@ -62,7 +62,7 @@ public class StaffLeaveDetector {
 
 	public void runAlertJob() {
 		logger.info("Staff Leave detector timer task started.");
-		refresh();
+		//refresh();
 		Map <String,StaffMessageDto> targets = tracingTargets;
 		Set<String> keys = targets.keySet();
 		Iterator<String> it = keys.iterator();
@@ -80,7 +80,6 @@ public class StaffLeaveDetector {
 				//Leaving
 				logingData.info(cardID + " has left,time:" + tts + ",now:" 
 						+ sdf.format(new Date()));
-			
 				staffAlertDAO.updateEnterLeaveInfo(smd);
 				it.remove();
 			}

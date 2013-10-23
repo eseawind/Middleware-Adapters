@@ -348,11 +348,12 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		try {
 			Statement stmt1 = conn.createStatement();
 			ResultSet rs1 = stmt1.executeQuery(
-					"SELECT count(target_id) FROM t_enterleaveinfo WHERE target_id = \'" 
-							+ smd.getCardID() + "\'");
-			rs1.next();
+					"SELECT target_id,eltype FROM t_enterleaveinfo WHERE target_id = \'" 
+							+ smd.getCardID() + "\' ORDER BY eltime DESC LIMIT 1");
+		
+			while(rs1.next()){
 			conn.setAutoCommit(false);
-			if(rs1.getInt(1) == 0){
+			if(rs1.getInt("eltype") == 0){
 				String targetID = smd.getCardID();
 				Statement stmt = conn.createStatement();
 				UserTargetOrgnaizeDto uto = this.getUTOByTargetID(targetID);
@@ -370,7 +371,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				sql.append(sT(uto.getDistributeTime())).append(",");
 				sql.append(uto.getRecycleStatus()).append(",");
 				sql.append(sT(uto.getRecycleTime())).append(",");
-				sql.append("0").append(",\'").append(smd.getTime());
+				sql.append("1").append(",\'").append(smd.getTime());
 				sql.append("\')");
 				//System.out.println("SQL :" + sql.toString());
 				int status = stmt.executeUpdate(sql.toString());
@@ -385,7 +386,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
         	        smd.getCardID() +"\'");
 			}
 			conn.commit();
-	        		
+			} 		
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
