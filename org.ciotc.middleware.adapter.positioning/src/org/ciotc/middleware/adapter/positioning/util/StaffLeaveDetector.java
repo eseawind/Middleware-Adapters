@@ -48,7 +48,9 @@ public class StaffLeaveDetector {
     		TracingTargetDto ttd = it.next();
     		StaffMessageDto smd = new StaffMessageDto();
     		smd.setCardID(ttd.getTargetID());
-    		smd.setTime(StaffAlertDAOImpl.tsToString(ttd.getElTime()));
+    		//fix time bug  StaffAlertDAOImpl.tsToString(ttd.getElTime())
+    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    		smd.setTime(sdf.format(new Date()));
     		tracingTargets.put(ttd.getTargetID(), smd);
     	}
     	System.out.println("Refresh Map finished.");
