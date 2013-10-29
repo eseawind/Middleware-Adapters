@@ -346,49 +346,47 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		
 		
 		try {
-			Statement stmt1 = conn.createStatement();
-			ResultSet rs1 = stmt1.executeQuery(
+			conn.setAutoCommit(false);
+			Statement stmt = conn.createStatement();
+			ResultSet rs1 = stmt.executeQuery(
 					"SELECT target_id,eltype FROM t_enterleaveinfo WHERE target_id = \'" 
 							+ smd.getCardID() + "\' ORDER BY eltime DESC LIMIT 1");
-		
 			while(rs1.next()){
-			conn.setAutoCommit(false);
-			if(rs1.getInt("eltype") == 0){
-				String targetID = smd.getCardID();
-				Statement stmt = conn.createStatement();
-				UserTargetOrgnaizeDto uto = this.getUTOByTargetID(targetID);
-				if(uto == null){
-					throw new NullPointerException();
-				}
-				StringBuffer sql = new StringBuffer();
-				sql.append(
+				if(rs1.getInt("eltype") == 0){
+					String targetID = smd.getCardID();
+					UserTargetOrgnaizeDto uto = this.getUTOByTargetID(targetID);
+					if(uto.getTargetID() == null){
+						throw new NullPointerException();
+					}
+					StringBuffer sql = new StringBuffer();
+					sql.append(
 						"INSERT INTO t_enterleaveinfo(user_id,organize_id,target_id,");
-				sql.append("target_code,validdate,distributestatue,distributetime,");
-				sql.append("recyclestatue,recycletime,eltype,eltime)VALUES( " );
-				sql.append(uto.getUserID()).append(",");
-				sql.append(uto.getOrganizeID()).append(",");
-				sql.append(uto.getTargetID()).append(",");
-				sql.append(uto.getTargetCode()).append(",");
-				sql.append(sT(uto.getValidDate())).append(",");
-				sql.append(uto.getDistributeStatus()).append(",");
-				sql.append(sT(uto.getDistributeTime())).append(",");
-				sql.append(uto.getRecycleStatus()).append(",");
-				sql.append(sT(uto.getRecycleTime())).append(",");
-				sql.append("1").append(",\'").append(smd.getTime());
-				sql.append("\')");
-				//System.out.println("SQL :" + sql.toString());
-				int status = stmt.executeUpdate(sql.toString());
-				if(status == 1){
-	        	stmt.executeUpdate(
-	        			"DELETE FROM t_lbstracedata WHERE target_id = \'" +
+					sql.append("target_code,validdate,distributestatue,distributetime,");
+					sql.append("recyclestatue,recycletime,eltype,eltime)VALUES( " );
+					sql.append(uto.getUserID()).append(",");
+					sql.append(uto.getOrganizeID()).append(",");
+					sql.append(uto.getTargetID()).append(",");
+					sql.append(uto.getTargetCode()).append(",");
+					sql.append(sT(uto.getValidDate())).append(",");
+					sql.append(uto.getDistributeStatus()).append(",");
+					sql.append(sT(uto.getDistributeTime())).append(",");
+					sql.append(uto.getRecycleStatus()).append(",");
+					sql.append(sT(uto.getRecycleTime())).append(",");
+					sql.append("1").append(",\'").append(smd.getTime());
+					sql.append("\')");
+					//System.out.println("SQL :" + sql.toString());
+					int status = stmt.executeUpdate(sql.toString());
+					if(status == 1){
+						stmt.executeUpdate(
+								"DELETE FROM t_lbstracedata WHERE target_id = \'" +
 	        	        smd.getCardID() +"\'");
-				}
-			}else{
-				stmt1.executeUpdate(
+					}
+				}else{
+				stmt.executeUpdate(
         			"DELETE FROM t_lbstracedata WHERE target_id = \'" +
         	        smd.getCardID() +"\'");
-			}
-			conn.commit();
+				}
+				conn.commit();
 			} 		
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");

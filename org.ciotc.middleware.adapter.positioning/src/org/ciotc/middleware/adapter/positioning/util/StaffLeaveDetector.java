@@ -34,9 +34,10 @@ public class StaffLeaveDetector {
 	private static final Log logingData = LogFactory.getLog("positiondata");
 	private static final Log logger = LogFactory.getLog(StaffLeaveDetector.class);
 	private StaffAlertDAO staffAlertDAO;
+	public static boolean isFirst = true;
 	StaffLeaveDetector(StaffAlertDAO staffAlertDAO){
 		this.staffAlertDAO = staffAlertDAO;
-		refresh();
+		//refresh();
 	}
 	public void setStaffAlertDAO(StaffAlertDAO staffAlertDAO){
 		this.staffAlertDAO = staffAlertDAO;
@@ -65,7 +66,10 @@ public class StaffLeaveDetector {
 
 	public void runAlertJob() {
 		logger.info("Staff Leave detector timer task started.");
-		//refresh();
+		//只在第一次运行任务时刷新Map
+		if(StaffLeaveDetector.isFirst){
+			refresh();
+		}
 		Map <String,StaffMessageDto> targets = tracingTargets;
 		Set<String> keys = targets.keySet();
 		Iterator<String> it = keys.iterator();
@@ -87,6 +91,7 @@ public class StaffLeaveDetector {
 				it.remove();
 			}
 		}
+		StaffLeaveDetector.isFirst = false;
 				
 	}
 	public static void main(String[] args){

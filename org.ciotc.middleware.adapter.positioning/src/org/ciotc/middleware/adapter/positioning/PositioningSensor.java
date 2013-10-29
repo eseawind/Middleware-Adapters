@@ -69,6 +69,7 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 				this.scheduler = (Scheduler) context.getBean("staffLeaveAlertScheduler");
 				try {
 					this.scheduler.start();
+					StaffLeaveDetector.isFirst = true;
 				} catch (SchedulerException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -109,6 +110,7 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 	      //停止后台任务
 	      try {
 			this.scheduler.standby();
+			StaffLeaveDetector.isFirst = true;
 	      } catch (SchedulerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
