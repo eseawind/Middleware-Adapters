@@ -10,8 +10,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanInfo;
-
-import org.ciotc.middleware.adapter.positioning.util.StaffLeaveDetector;
 import org.ciotc.middleware.configuration.AnnotationMBeanInfoStrategy;
 import org.ciotc.middleware.configuration.JMXMBean;
 import org.ciotc.middleware.configuration.Property;
@@ -21,16 +19,9 @@ import org.ciotc.middleware.exceptions.CannotDestroySensorException;
 import org.ciotc.middleware.sensors.AbstractCommandConfiguration;
 import org.ciotc.middleware.sensors.AbstractSensor;
 import org.ciotc.middleware.sensors.SensorSession;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SimpleTrigger;
-import org.quartz.Trigger;
-import org.quartz.impl.StdSchedulerFactory;
 import org.rifidi.edge.api.SessionDTO;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.expression.BeanFactoryAccessor;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 
 @JMXMBean
 public class PositioningSensor extends AbstractSensor<PositioningSensorSession> {
@@ -41,14 +32,7 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
 	private AtomicReference<PositioningSensorSession> session = new AtomicReference();
 	public static final MBeanInfo mbeaninfo;
-	//control quartz timer task
-	private Scheduler scheduler = null;
-	private ApplicationContext context;
 	
-	public void setContext(ApplicationContext context) {
-		this.context = context;
-	}
-
 	static {
 		AnnotationMBeanInfoStrategy strategy = new AnnotationMBeanInfoStrategy();
 		mbeaninfo = strategy.getMBeanInfo(PositioningSensor.class);
@@ -65,14 +49,6 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 					super.getID(), this.host,this.port.intValue(), new HashSet()))) {
 				this.notifierService.addSessionEvent(getID(), 
 						Integer.toString(sessionID.intValue()));
-				//启动后台线程检测人员离开
-				this.scheduler = (Scheduler) context.getBean("staffLeaveAlertScheduler");
-				try {
-					this.scheduler.start();
-				} catch (SchedulerException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				return sessionID.toString();
 			}
 		}
@@ -106,13 +82,6 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 	      positioningSensorSession.disconnect();
 
 	      this.notifierService.removeSessionEvent(getID(), id);
-	      //停止后台任务
-	      try {
-			this.scheduler.standby();
-	      } catch (SchedulerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-	      }
 	    } else {
 	      String error = "Tried to delete a non existend session: " + id;
 	      throw new CannotDestroySensorException(error);

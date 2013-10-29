@@ -4,56 +4,7 @@
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/osgi 
     http://www.springframework.org/schema/osgi/spring-osgi.xsd">
-
- <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<value>classpath:META-INF/spring/alert.properties
-			</value>
-		</property>
-		<property name="systemPropertiesMode">
-			<value>2</value>
-		</property>
-	</bean>
-
-	<bean id="datasource1" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-		<property name="driverClass" value="${org.ciotc.middleware.jdbc.driver}" />
-		<property name="url" value="${org.ciotc.middleware.jdbc.url}" />
-		<property name="username" value="${org.ciotc.middleware.jdbc.user}" />
-		<property name="password" value="${org.ciotc.middleware.jdbc.pass}" />
-	</bean>
-	<bean id="staffAlertDAOImpl" class="org.ciotc.middleware.adapter.positioning.util.StaffAlertDAOImpl">
-		<property name="dataSource" ref="datasource1" />
-	</bean>
-	
-	<!-- StaffLeaveAlertAlert定时任务配置 -->
-	<bean id="staffLeaveAlert"
-		class="org.ciotc.middleware.adapter.positioning.util.StaffLeaveDetector">
-		<constructor-arg ref="staffAlertDAOImpl"/>
-<!-- 		<property name="staffAlertDAO" ref="staffAlertDAOImpl" /> -->
-	</bean>
-	<bean id="staffLeaveAlertTrigger" 
-		class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail" ref="staffLeaveAlertDetail"></property>
-		<property name="cronExpression" value="*/10 * * * * ?">
-		</property>	
-	</bean>
-	<bean id="staffLeaveAlertDetail" 
-	class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="staffLeaveAlert"></property>
-		<property name="targetMethod" value="runAlertJob"></property>
-		<property name="concurrent" value="false"></property>
-	</bean>	
-	<!-- 管理类Scheduler配置 -->
-	<bean id="staffLeaveAlertScheduler"
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<list>
-				<ref bean="staffLeaveAlertTrigger"></ref>
-			</list>
-		</property>
-		<property name="autoStartup" value="false"></property>
-	</bean>
-	
+    	
 	<!--  Create Reader Configuration Factory -->
 	<bean id="PositioningSensorFactory" class="org.ciotc.middleware.adapter.positioning.PositioningSensorFactory">
 		<property name="context" ref="bundleContext" />

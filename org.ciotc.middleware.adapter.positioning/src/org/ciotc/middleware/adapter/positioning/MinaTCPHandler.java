@@ -16,7 +16,6 @@ import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.ciotc.middleware.adapter.positioning.pojo.GwMessage;
-import org.ciotc.middleware.adapter.positioning.util.StaffLeaveDetector;
 import org.ciotc.middleware.notification.StaffMessageDto;
 import org.ciotc.middleware.sensors.AbstractSensor;
 import org.ciotc.middleware.sensors.Sensor;
@@ -73,8 +72,6 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 							+ " ;Time: " + smd.getTime() 
 							+ ";Receive timestamp:" + new Date());
 					sensor.sendEvent(smd);
-					//检测人员离开
-					StaffLeaveDetector.put(smd);
 					//发送心跳包维持连接
 					IoBuffer resp = IoBuffer.wrap(GwMessage.makeHeartBeat());
 					session.write(resp);
