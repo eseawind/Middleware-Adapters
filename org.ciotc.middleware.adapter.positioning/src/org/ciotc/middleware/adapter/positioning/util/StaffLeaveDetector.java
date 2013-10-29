@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,7 +30,7 @@ import org.ciotc.middleware.notification.StaffMessageDto;
  *
  */
 public class StaffLeaveDetector {
-	private static Map<String,StaffMessageDto> tracingTargets;
+	private static ConcurrentHashMap<String,StaffMessageDto> tracingTargets;
 	private static final Log logingData = LogFactory.getLog("positiondata");
 	private static final Log logger = LogFactory.getLog(StaffLeaveDetector.class);
 	private StaffAlertDAO staffAlertDAO;
@@ -43,7 +45,7 @@ public class StaffLeaveDetector {
     	List<TracingTargetDto> ttds = 
     			staffAlertDAO.getTracingTargetsByLBSTraceTable();
     	Iterator<TracingTargetDto> it = ttds.iterator();
-    	tracingTargets = new HashMap<String,StaffMessageDto>();
+    	tracingTargets = new ConcurrentHashMap<String,StaffMessageDto>();
     	while(it.hasNext()){
     		TracingTargetDto ttd = it.next();
     		StaffMessageDto smd = new StaffMessageDto();
@@ -56,10 +58,9 @@ public class StaffLeaveDetector {
     	System.out.println("Refresh Map finished.");
     }
 	public static void put(StaffMessageDto smd){
-		synchronized(tracingTargets){
-			
+		//synchronized(tracingTargets){
 			tracingTargets.put(smd.getCardID(), smd);
-		}
+		//}
 	}
 
 	public void runAlertJob() {

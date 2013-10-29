@@ -357,6 +357,9 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				String targetID = smd.getCardID();
 				Statement stmt = conn.createStatement();
 				UserTargetOrgnaizeDto uto = this.getUTOByTargetID(targetID);
+				if(uto == null){
+					throw new NullPointerException();
+				}
 				StringBuffer sql = new StringBuffer();
 				sql.append(
 						"INSERT INTO t_enterleaveinfo(user_id,organize_id,target_id,");
@@ -390,6 +393,9 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
+		} catch (NullPointerException e){
+			logger.error("no related data in t_enterleaveinfo for target_id : " 
+						+ smd.getCardID());
 		}
 		close(conn);
 		
@@ -402,6 +408,9 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	 * @return
 	 */
 	public String sT(Timestamp ts){
+		if(ts == null){
+			return null;
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar c = Calendar.getInstance();
 		c.setTimeInMillis(ts.getTime());
@@ -416,6 +425,9 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	 * @return
 	 */
 	public static String tsToString(Timestamp ts){
+		if(ts == null){
+			return null;
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar c = Calendar.getInstance();
 		c.setTimeInMillis(ts.getTime());
