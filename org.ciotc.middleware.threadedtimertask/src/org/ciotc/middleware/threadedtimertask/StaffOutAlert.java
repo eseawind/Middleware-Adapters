@@ -51,7 +51,7 @@ public class StaffOutAlert extends AbstractAlert{
 				   StaffMessageDto smd = new StaffMessageDto();
 				   smd.setCardID(tt.getTargetID());
 				   smd.setTime(tsToString(tt.getElTime()));
-				   //staffAlertDAO.updateEnterLeaveInfo(smd);
+				   staffAlertDAO.updateEnterLeaveInfo(smd);
 				   //TODO remove after test
 				   System.out.println("update enterleaveinfo of " + smd.getCardID());
 				   targetToUsers.put(tt.getTargetID(),tt.getUserID());
