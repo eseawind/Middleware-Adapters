@@ -10,6 +10,8 @@ package org.ciotc.middleware.threadedtimertask.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.ciotc.middleware.notification.StaffMessageDto;
+
 /**
  * @author ZhangMin.name
  *
@@ -29,5 +31,8 @@ public interface StaffAlertDAO {
 				getTargetUserByTargetID(List<String> targets);
 	public int getBatteryLifeByID(String battery);
 	public String getAntennaIDByDevice(int deviceType);
+	public void updateEnterLeaveInfo(StaffMessageDto smd);
+	public UserTargetOrgnaizeDto getUTOByTargetID(String targetID);
+	public List<UserTargetOrgnaizeDto> getUTOByTargetIDs(List<String> targetIDs);
 	
 }

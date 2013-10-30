@@ -13,7 +13,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +25,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ciotc.middleware.threadedtimertask.AbstractAlert;
+import org.ciotc.middleware.notification.StaffMessageDto;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 /**
@@ -294,7 +296,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		ResultSet rs = this.exeuteSQL(
 				"SELECT * FROM t_lbstracedata WHERE target_id " +
 				"IN ( SELECT target_id FROM t_lbsdata WHERE elflag = 1 AND " +
-				" antenna_id = " + antennaID + " )");
+				" antenna_id = " + antennaID + " ) AND elflag = 1 ORDER BY eltime DESC");
 		try {
 			while(rs.next()){
 				TracingTargetDto tt = new TracingTargetDto();
@@ -329,5 +331,175 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		}
 		
 		return antenna;
+	}
+	/**
+	 * 当检测到有人员离开通讯基站可以覆盖的范围时，更新
+	 * t_enterleaveinfo表，并删除t_lbstracedata表
+	 * 中的相关条目。！作为一个事务执行。
+	 */
+	@Override
+	public void updateEnterLeaveInfo(StaffMessageDto smd) {
+		Connection conn = this.getConnection();
+		
+		
+		try {
+			conn.setAutoCommit(false);
+			Statement stmt = conn.createStatement();
+			ResultSet rs1 = stmt.executeQuery(
+					"SELECT target_id,eltype FROM t_enterleaveinfo WHERE target_id = \'" 
+							+ smd.getCardID() + "\' ORDER BY eltime DESC LIMIT 1");
+			while(rs1.next()){
+				if(rs1.getInt("eltype") == 0){
+					String targetID = smd.getCardID();
+					UserTargetOrgnaizeDto uto = this.getUTOByTargetID(targetID);
+					if(uto.getTargetID() == null){
+						throw new NullPointerException();
+					}
+					StringBuffer sql = new StringBuffer();
+					sql.append(
+						"INSERT INTO t_enterleaveinfo(user_id,organize_id,target_id,");
+					sql.append("target_code,validdate,distributestatue,distributetime,");
+					sql.append("recyclestatue,recycletime,eltype,eltime)VALUES( " );
+					sql.append(uto.getUserID()).append(",");
+					sql.append(uto.getOrganizeID()).append(",");
+					sql.append(uto.getTargetID()).append(",");
+					sql.append(uto.getTargetCode()).append(",");
+					sql.append(sT(uto.getValidDate())).append(",");
+					sql.append(uto.getDistributeStatus()).append(",");
+					sql.append(sT(uto.getDistributeTime())).append(",");
+					sql.append(uto.getRecycleStatus()).append(",");
+					sql.append(sT(uto.getRecycleTime())).append(",");
+					sql.append("1").append(",\'").append(smd.getTime());
+					sql.append("\')");
+					//System.out.println("SQL :" + sql.toString());
+					int status = stmt.executeUpdate(sql.toString());
+					if(status == 1){
+						stmt.executeUpdate(
+								"DELETE FROM t_lbstracedata WHERE target_id = \'" +
+	        	        smd.getCardID() +"\'");
+					}
+				}else{
+				stmt.executeUpdate(
+        			"DELETE FROM t_lbstracedata WHERE target_id = \'" +
+        	        smd.getCardID() +"\'");
+				}
+				conn.commit();
+			} 		
+		} catch (SQLException e) {
+			logger.error("error occured when executing sql");
+			e.printStackTrace();
+		} catch (NullPointerException e){
+			logger.error("no related data in t_enterleaveinfo for target_id : " 
+						+ smd.getCardID());
+		}
+		close(conn);
+		
+	}
+	/**
+	 * 将一个Timestamp对象格式化为 'yyyy-MM-dd HH:mm:ss',
+	 * 用于数据中数据的插入
+	 * 因为Timestamp自带方法均已被废弃
+	 * @param ts
+	 * @return
+	 */
+	public String sT(Timestamp ts){
+		if(ts == null){
+			return null;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(ts.getTime());
+		StringBuffer sb = new StringBuffer();
+		sb.append("\'").append(sdf.format(c.getTime())).append("\'");
+		return sb.toString();
+	}
+	/**
+	 * 将一个Timestamp对象格式化为 yyyy-MM-dd HH:mm:ss,
+	 * 因为Timestamp自带方法均已被废弃
+	 * @param ts
+	 * @return
+	 */
+	public static String tsToString(Timestamp ts){
+		if(ts == null){
+			return null;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(ts.getTime());
+		StringBuffer sb = new StringBuffer();
+		sb.append(sdf.format(c.getTime()));
+		return sb.toString();
+	}
+	/*
+	 * 根据target_id 获取UserTargetOrganizeDto
+	 */
+	@Override
+	public UserTargetOrgnaizeDto getUTOByTargetID(String targetID) {
+		UserTargetOrgnaizeDto uto = new UserTargetOrgnaizeDto();
+		ResultSet rs = this.exeuteSQL(
+				"SELECT * FROM T_UserTargetOrgnaize" +
+				" Where target_id = \'" + targetID + "\'");
+		try {
+			while(rs.next()){
+				uto.setUserID(rs.getInt("user_id"));
+				uto.setOrganizeID(rs.getInt("organize_id"));
+				uto.setTargetID(rs.getString("target_id"));
+				uto.setTargetCode(rs.getString("target_code"));
+				uto.setValidDate(rs.getTimestamp("validdate"));
+				uto.setDistributeStatus(rs.getInt("distributestatue"));
+				uto.setDistributeTime(rs.getTimestamp("distributetime"));
+				uto.setRecycleTime(rs.getTimestamp("recycletime"));
+				uto.setRecycleStatus(rs.getInt("recyclestatue"));
+				uto.setVersion(rs.getInt("version"));
+				uto.setReason(rs.getString("reason"));
+				uto.setOperaterID(rs.getInt("operater_id"));
+				uto.setUsertypeID(rs.getInt("usertype_id"));
+			}
+		} catch (SQLException e) {
+			logger.error("error occured when executing sql");
+			e.printStackTrace();
+		}
+		return uto;
+	}
+	/*
+	 * 根据List<target_id> 获取UserTargetOrganizeDto
+	 */
+	@Override
+	public List<UserTargetOrgnaizeDto> getUTOByTargetIDs(List<String> targetIDs) {
+		List<UserTargetOrgnaizeDto> utos = 
+				new ArrayList<UserTargetOrgnaizeDto>();
+		Connection conn = this.getConnection();
+		Iterator<String> it = targetIDs.iterator();
+		try {
+			PreparedStatement ps = conn.prepareStatement(
+					"SELECT * FROM T_UserTargetOrgnaize" +
+					" Where target_id = ? ");
+			while(it.hasNext()){
+				String targetID = it.next();
+				ps.setString(1, targetID);
+				ResultSet rs = ps.executeQuery();
+				while(rs.next()){
+					UserTargetOrgnaizeDto uto = new UserTargetOrgnaizeDto();
+					uto.setUserID(rs.getInt("user_id"));
+					uto.setOrganizeID(rs.getInt("organize_id"));
+					uto.setTargetID(rs.getString("target_id"));
+					uto.setTargetCode(rs.getString("target_code"));
+					uto.setValidDate(rs.getTimestamp("validdate"));
+					uto.setDistributeStatus(rs.getInt("distributestatue"));
+					uto.setDistributeTime(rs.getTimestamp("distributetime"));
+					uto.setRecycleTime(rs.getTimestamp("recycletime"));
+					uto.setRecycleStatus(rs.getInt("recyclestatue"));
+					uto.setVersion(rs.getInt("version"));
+					uto.setReason(rs.getString("reason"));
+					uto.setOperaterID(rs.getInt("operater_id"));
+					uto.setUsertypeID(rs.getInt("usertype_id"));
+					utos.add(uto);
+				}
+			}
+		} catch (SQLException e) {
+			logger.error("error occured when executing sql");
+			e.printStackTrace();
+		}
+		return utos;
 	}
 }
