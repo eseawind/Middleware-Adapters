@@ -42,24 +42,6 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	public void setDataSource(SimpleDriverDataSource sdds){
 		this.dataSource = sdds;
 	}
-	public ResultSet exeuteSQL(String sql){
-		Connection conn = null;
-		ResultSet rs = null;
-		if(dataSource == null){
-			logger.error("dataSource can not be null");
-		}
-		try {
-			conn = dataSource.getConnection();
-			Statement stmt = conn.createStatement();
-			rs = stmt.executeQuery(sql);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			logger.error("execute sql error " + sql);
-		}finally{
-			close(conn);
-		}
-		return rs;
-	}
 	public Connection getConnection(){
 		Connection conn = null;
 		if(dataSource == null){
@@ -83,6 +65,16 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 			e.printStackTrace();
 		}
 	}
+	public void closeStmt(Statement stmt){
+		if( stmt != null){
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				logger.error("Statement close error!");
+				e.printStackTrace();
+			}
+		}
+	}
 	/**
 	 * 向t_manageeventlog表中插入告警事件，如果已经被处理则取消插入。
 	 */
@@ -90,14 +82,14 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	public void insertEventLog(int eventTypeID, int subEventType, String targetID,
 			int userID) {
 		Connection conn = getConnection();
-		Date date = new Date();
-		Timestamp eventTime = new Timestamp(date.getTime());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Timestamp eventTime = Timestamp.valueOf(sdf.format(new Date()));
 		try {
 			Statement statement = conn.createStatement();
 			String sql = 
 					"SELECT handlestatus FROM t_manageeventlog WHERE eventtype_id=" 
 					+ eventTypeID 
-					+ " AND subEventType=" + subEventType + " AND user_id=" 
+					+ " AND subevent_type=" + subEventType + " AND user_id=" 
 					+ userID + " AND handlestatus=0";
 			ResultSet rs = statement.executeQuery(sql);
 			if(!rs.next()) {
@@ -112,11 +104,16 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				ps.setString(4, targetID);
 				ps.setInt(5, userID);
 				ps.executeUpdate();
+				closeStmt(ps);
 			}
+			closeStmt(statement);
+			
 		} catch (SQLException e) {
 			logger.error("SQLException: " + e.getMessage());
 		} finally{
+			
 			close(conn);
+			
 		}
 	}
 	/**
@@ -125,12 +122,15 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	@Override
 	public List<String> getTargetsFromLBSTraceTable() {
 		List<String> targets = new ArrayList<String>();
-		ResultSet rs = this.exeuteSQL(
-				"SELECT target_id FROM t_lbstracedata");
+		
 		try {
+			Statement stmt = this.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(
+					"SELECT target_id FROM t_lbstracedata");
 			while(rs.next()){
 				targets.add(rs.getString(1));
 			}
+			closeStmt(stmt);
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
@@ -143,27 +143,24 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	@Override
 	public Map<String, Integer> getTargetUserByTargetID(
 			List<String> targets) {
-		Connection conn = this.getConnection();
 		Map<String,Integer> targetToUser = new HashMap<String,Integer>();
 		Iterator<String> it = targets.iterator();
 		while(it.hasNext()){
 			String target = it.next();
 			try {
-				Statement stmt = conn.createStatement();
+				Statement stmt = this.getConnection().createStatement();
 				ResultSet rs = stmt.executeQuery(
 						"SELECT target_id,user_id FROM T_UserTargetOrgnaize " +
 						" Where target_id = \'" + target + "\'");
 				while(rs.next()){
 					targetToUser.put(rs.getString(1), rs.getInt(2));
 				}
-				
+				closeStmt(stmt);
 			} catch (SQLException e) {
 				logger.error("error occured when executing sql");
 				e.printStackTrace();
-			}
-			
+			}	
 		}
-		close(conn);
 		return targetToUser;
 	}
 	/**
@@ -172,12 +169,15 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	@Override
 	public int getBatteryLifeByID(String battery) {
 		int avgtime = -1;
-		ResultSet rs = this.exeuteSQL(
-				"SELECT avgtime FROM t_battery WHERE battery_id = \'"
-				+ battery + "\'");
 		try {
-			rs.next();
-			avgtime = rs.getInt(1);
+			Statement stmt = this.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(
+					"SELECT avgtime FROM t_battery WHERE battery_id = \'"
+							+ battery + "\'");
+			while(rs.next()){
+				avgtime = rs.getInt(1);
+			}
+			closeStmt(stmt);
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
@@ -190,10 +190,12 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	@Override
 	public List<TargetInfoDto> getTargetsInfoByLBSTraceTable() {
 		List<TargetInfoDto> targets = new ArrayList<TargetInfoDto>();
-		ResultSet rs = this.exeuteSQL(
-				"SELECT * FROM t_target WHERE target_id "+
-				"IN (SELECT DISTINCT target_id FROM t_lbstracedata)");
+		
 		try {
+			Statement stmt = this.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(
+					"SELECT * FROM t_target WHERE target_id "+
+					"IN (SELECT DISTINCT target_id FROM t_lbstracedata)");
 			while(rs.next()){
 				TargetInfoDto ttd = new TargetInfoDto();
 				ttd.setTargetID(rs.getString("target_id"));
@@ -204,6 +206,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				ttd.setRemark(rs.getString("remark"));
 				targets.add(ttd);
 			}
+			closeStmt(stmt);
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
@@ -217,11 +220,13 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	public List<UserTargetOrgnaizeDto> getUTOByLBSTraceTable() {
 		List<UserTargetOrgnaizeDto> utos = 
 				new ArrayList<UserTargetOrgnaizeDto>();
-		ResultSet rs = this.exeuteSQL(
-				"SELECT * FROM T_UserTargetOrgnaize" +
-				" Where target_id IN " +
-			    "(SELECT DISTINCT target_id FROM T_LBSTraceData)");
+	
 		try {
+			Statement stmt = this.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(
+					"SELECT * FROM T_UserTargetOrgnaize" +
+					" Where target_id IN " +
+				    "(SELECT DISTINCT target_id FROM T_LBSTraceData)");
 			while(rs.next()){
 				UserTargetOrgnaizeDto uto = new UserTargetOrgnaizeDto();
 				uto.setUserID(rs.getInt("user_id"));
@@ -239,6 +244,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				uto.setUsertypeID(rs.getInt("usertype_id"));
 				utos.add(uto);
 			}
+			closeStmt(stmt);
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
@@ -256,12 +262,12 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		while(it2.hasNext()){
 			String target = it2.next();
 			int user = targetToUsers.get(target);
-			logger.info("Insert AlertEvent: " + "Type:" + 
-						eventTypeID + ",SubType:" +
-						subEventType + ",user_id:" + 
-						user + ",target_id:" + target);
-			//TODO 暂时不插入数据库，方便测试
-			//this.insertEventLog(eventTypeID, subEventType, target, user);
+			logger.info("Insert AlertEvent: " + "Type: " + 
+						eventTypeID + ",SubType: " +
+						subEventType + ",user_id: " + 
+						user + ",target_id: " + target);
+			
+			this.insertEventLog(eventTypeID, subEventType, target, user);
 		}
 		
 	}
@@ -271,9 +277,11 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	@Override
 	public List<TracingTargetDto> getTracingTargetsByLBSTraceTable() {
 		List<TracingTargetDto> tts = new ArrayList<TracingTargetDto>();
-		ResultSet rs = this.exeuteSQL(
-				"SELECT * FROM t_lbstracedata");
+	
 		try {
+			Statement stmt = this.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(
+				"SELECT * FROM t_lbstracedata");
 			while(rs.next()){
 				TracingTargetDto tt = new TracingTargetDto();
 				tt.setAreaID(rs.getInt("area_id"));
@@ -283,6 +291,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				tt.setUserID(rs.getInt("user_id"));
 				tts.add(tt);
 			}
+			closeStmt(stmt);
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
@@ -296,11 +305,13 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	public List<TracingTargetDto> getLeavingTracingTargetByAntennaID(
 			String antennaID) {
 		List<TracingTargetDto> tts = new ArrayList<TracingTargetDto>();
-		ResultSet rs = this.exeuteSQL(
+		
+		try {
+			Statement stmt = this.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(
 				"SELECT * FROM t_lbstracedata WHERE target_id " +
 				"IN ( SELECT target_id FROM t_lbsdata WHERE elflag = 1 AND " +
 				" antenna_id = " + antennaID + " )");
-		try {
 			while(rs.next()){
 				TracingTargetDto tt = new TracingTargetDto();
 				tt.setAreaID(rs.getInt("area_id"));
@@ -310,6 +321,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				tt.setUserID(rs.getInt("user_id"));
 				tts.add(tt);
 			}
+			closeStmt(stmt);
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
@@ -322,12 +334,16 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	@Override
 	public String getAntennaIDByDevice(int deviceType) {
 		String antenna = null;
-		ResultSet rs = this.exeuteSQL(
+		
+		try {
+			Statement stmt = this.getConnection().createStatement();
+			ResultSet rs = stmt.executeQuery(
 				"SELECT antenna_id FROM t_antenna WHERE devicetype_id = " 
 						+ deviceType);
-		try {
-			rs.next();
-			antenna = rs.getString(1);
+			while(rs.next()){
+				antenna = rs.getString(1);
+			}
+			closeStmt(stmt);
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
@@ -343,11 +359,10 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	@Override
 	public void updateEnterLeaveInfo(StaffMessageDto smd) {
 		Connection conn = this.getConnection();
-		
-		
 		try {
-			conn.setAutoCommit(false);
 			Statement stmt = conn.createStatement();
+			Statement stmti = conn.createStatement();
+			Statement stmtd = conn.createStatement();
 			ResultSet rs1 = stmt.executeQuery(
 					"SELECT target_id,eltype FROM t_enterleaveinfo WHERE target_id = \'" 
 							+ smd.getCardID() + "\' ORDER BY eltime DESC LIMIT 1");
@@ -375,19 +390,23 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 					sql.append("1").append(",\'").append(smd.getTime());
 					sql.append("\')");
 					//System.out.println("SQL :" + sql.toString());
-					int status = stmt.executeUpdate(sql.toString());
+					int status = stmti.executeUpdate(sql.toString());
 					if(status == 1){
-						stmt.executeUpdate(
+						stmtd.executeUpdate(
 								"DELETE FROM t_lbstracedata WHERE target_id = \'" +
 	        	        smd.getCardID() +"\'");
 					}
 				}else{
-				stmt.executeUpdate(
+					
+				stmtd.executeUpdate(
         			"DELETE FROM t_lbstracedata WHERE target_id = \'" +
         	        smd.getCardID() +"\'");
 				}
-				conn.commit();
-			} 		
+			}
+			closeStmt(stmt);
+			closeStmt(stmti);
+			closeStmt(stmtd);
+		    close(conn);
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
@@ -395,7 +414,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 			logger.error("no related data in t_enterleaveinfo for target_id : " 
 						+ smd.getCardID());
 		}
-		close(conn);
+		
 		
 	}
 	/**
@@ -439,10 +458,12 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	@Override
 	public UserTargetOrgnaizeDto getUTOByTargetID(String targetID) {
 		UserTargetOrgnaizeDto uto = new UserTargetOrgnaizeDto();
-		ResultSet rs = this.exeuteSQL(
-				"SELECT * FROM T_UserTargetOrgnaize" +
-				" Where target_id = \'" + targetID + "\'");
+	    Connection conn = this.getConnection();
 		try {
+			 Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(
+						"SELECT * FROM T_UserTargetOrgnaize" +
+						" Where target_id = \'" + targetID + "\'");
 			while(rs.next()){
 				uto.setUserID(rs.getInt("user_id"));
 				uto.setOrganizeID(rs.getInt("organize_id"));
@@ -458,6 +479,8 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				uto.setOperaterID(rs.getInt("operater_id"));
 				uto.setUsertypeID(rs.getInt("usertype_id"));
 			}
+			closeStmt(stmt);
+			close(conn);
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
@@ -499,6 +522,8 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 					utos.add(uto);
 				}
 			}
+			closeStmt(ps);
+			close(conn);
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
