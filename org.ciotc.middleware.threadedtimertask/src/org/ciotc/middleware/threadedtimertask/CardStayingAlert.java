@@ -37,22 +37,25 @@ public class CardStayingAlert extends AbstractAlert {
 		Iterator<TracingTargetDto> it = tts.iterator();
 		while(it.hasNext()){
 			TracingTargetDto tt = it.next();
-			Timestamp ts = tt.getElTime();
-			long enterTime = System.currentTimeMillis()- ts.getTime();
-			if(enterTime > interval){
-				targetToUsers.put(tt.getTargetID(), tt.getUserID());
+			if(tt.getElTime() != null){
+				Timestamp ts = tt.getElTime();
+				long enterTime = System.currentTimeMillis()- ts.getTime();
+				if(enterTime > interval){
+					targetToUsers.put(tt.getTargetID(), tt.getUserID());
+				}
 			}
+			
 		}
 		//TODO remove after test
-		Set<String> targets = targetToUsers.keySet();
-		Iterator<String> it1 = targets.iterator();
-		while(it1.hasNext()){
-			String target = it1.next();
-			int user = targetToUsers.get(target);
-			logger.info("[CardStayingAlertInfo] user_id:" + user +
-					"target_id:" + target);
-		}
-		//sad.alarm(2, 2, targetToUser);
+//		Set<String> targets = targetToUsers.keySet();
+//		Iterator<String> it1 = targets.iterator();
+//		while(it1.hasNext()){
+//			String target = it1.next();
+//			int user = targetToUsers.get(target);
+//			logger.info("[CardStayingAlertInfo] user_id:" + user +
+//					"target_id:" + target);
+//		}
+		staffAlertDAO.alarm(2, 2, targetToUsers);
 		
 	}
 

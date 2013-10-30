@@ -88,7 +88,7 @@
 	</bean>
 	<bean id="staffOutAlertTrigger" 
 		class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail" ref="cardStayingAlertDetail"></property>
+		<property name="jobDetail" ref="staffOutAlertDetail"></property>
 		<property name="cronExpression" value="*/20 * * * * ?">
 		</property>	
 	</bean>

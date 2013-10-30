@@ -37,21 +37,23 @@ public class CardExpireAlert extends AbstractAlert {
 		Iterator<UserTargetOrgnaizeDto> it = utos.iterator();
 		while(it.hasNext()){
 			UserTargetOrgnaizeDto uto = it.next();
-			Timestamp validdate = uto.getValidDate();
-			if(validdate.before(new Date())){
+			if(uto.getValidDate() != null){
+				Timestamp validdate = uto.getValidDate();
+				if(validdate.before(new Date())){
 				targetToUsers.put(uto.getTargetID(), uto.getUserID());
+				}
 			}
 		}
 		//TODO remove after test
-		Set<String> targets = targetToUsers.keySet();
-		Iterator<String> it2 = targets.iterator();
-		while(it2.hasNext()){
-			String target = it2.next();
-			int user = targetToUsers.get(target);
-			logger.info("[CardExpireAlert] user_id:" + user +
-					"target_id:" + target);
-		}
-		//sad.alarm(2, 4, targetToUsers);
+//		Set<String> targets = targetToUsers.keySet();
+//		Iterator<String> it2 = targets.iterator();
+//		while(it2.hasNext()){
+//			String target = it2.next();
+//			int user = targetToUsers.get(target);
+//			logger.info("[CardExpireAlert] user_id:" + user +
+//					"target_id:" + target);
+//		}
+		staffAlertDAO.alarm(2, 4, targetToUsers);
 	}
 
 }

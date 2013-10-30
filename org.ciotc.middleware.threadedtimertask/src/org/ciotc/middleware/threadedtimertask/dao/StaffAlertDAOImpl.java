@@ -87,14 +87,14 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	public void insertEventLog(int eventTypeID, int subEventType, String targetID,
 			int userID) {
 		Connection conn = getConnection();
-		Date date = new Date();
-		Timestamp eventTime = new Timestamp(date.getTime());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Timestamp eventTime = Timestamp.valueOf(sdf.format(new Date()));
 		try {
 			Statement statement = conn.createStatement();
 			String sql = 
 					"SELECT handlestatus FROM t_manageeventlog WHERE eventtype_id=" 
 					+ eventTypeID 
-					+ " AND subEventType=" + subEventType + " AND user_id=" 
+					+ " AND subevent_type=" + subEventType + " AND user_id=" 
 					+ userID + " AND handlestatus=0";
 			ResultSet rs = statement.executeQuery(sql);
 			if(!rs.next()) {
@@ -173,8 +173,10 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				"SELECT avgtime FROM t_battery WHERE battery_id = \'"
 				+ battery + "\'");
 		try {
-			rs.next();
-			avgtime = rs.getInt(1);
+			while(rs.next()){
+				avgtime = rs.getInt(1);
+			}
+			
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
@@ -257,8 +259,8 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 						eventTypeID + ",SubType:" +
 						subEventType + ",user_id:" + 
 						user + ",target_id:" + target);
-			//TODO 暂时不插入数据库，方便测试
-			//this.insertEventLog(eventTypeID, subEventType, target, user);
+			
+			this.insertEventLog(eventTypeID, subEventType, target, user);
 		}
 		
 	}
@@ -296,7 +298,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		ResultSet rs = this.exeuteSQL(
 				"SELECT * FROM t_lbstracedata WHERE target_id " +
 				"IN ( SELECT target_id FROM t_lbsdata WHERE elflag = 1 AND " +
-				" antenna_id = " + antennaID + " ) AND elflag = 1 ORDER BY eltime DESC");
+				" antenna_id = " + antennaID + " )");
 		try {
 			while(rs.next()){
 				TracingTargetDto tt = new TracingTargetDto();
@@ -323,8 +325,10 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				"SELECT antenna_id FROM t_antenna WHERE devicetype_id = " 
 						+ deviceType);
 		try {
-			rs.next();
-			antenna = rs.getString(1);
+			while(rs.next()){
+				antenna = rs.getString(1);
+			}
+			
 		} catch (SQLException e) {
 			logger.error("error occured when executing sql");
 			e.printStackTrace();
