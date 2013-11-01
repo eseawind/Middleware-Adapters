@@ -102,6 +102,10 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				ps.setInt(5, userID);
 				ps.executeUpdate();
 				closeStmt(ps);
+				logger.info("Insert AlertEvent: " + "Type: " + 
+						eventTypeID + ",SubType: " +
+						subEventType + ",user_id: " + 
+						userID + ",target_id: " + targetID);
 			}
 			closeStmt(statement);
 			
@@ -259,11 +263,6 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		while(it2.hasNext()){
 			String target = it2.next();
 			int user = targetToUsers.get(target);
-			logger.info("Insert AlertEvent: " + "Type: " + 
-						eventTypeID + ",SubType: " +
-						subEventType + ",user_id: " + 
-						user + ",target_id: " + target);
-			
 			this.insertEventLog(eventTypeID, subEventType, target, user);
 		}
 		
@@ -386,7 +385,6 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 					sql.append(sT(uto.getRecycleTime())).append(",");
 					sql.append("1").append(",\'").append(smd.getTime());
 					sql.append("\')");
-					//System.out.println("SQL :" + sql.toString());
 					int status = stmti.executeUpdate(sql.toString());
 					if(status == 1){
 						stmtd.executeUpdate(
@@ -394,8 +392,8 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	        	        smd.getCardID() +"\'");
 					}
 				}else{
-					
-				stmtd.executeUpdate(
+					  
+				    stmtd.executeUpdate(
         			"DELETE FROM t_lbstracedata WHERE target_id = \'" +
         	        smd.getCardID() +"\'");
 				}

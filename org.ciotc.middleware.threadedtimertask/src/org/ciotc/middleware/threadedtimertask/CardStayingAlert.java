@@ -46,15 +46,6 @@ public class CardStayingAlert extends AbstractAlert {
 			}
 			
 		}
-		//TODO remove after test
-//		Set<String> targets = targetToUsers.keySet();
-//		Iterator<String> it1 = targets.iterator();
-//		while(it1.hasNext()){
-//			String target = it1.next();
-//			int user = targetToUsers.get(target);
-//			logger.info("[CardStayingAlertInfo] user_id:" + user +
-//					"target_id:" + target);
-//		}
 		staffAlertDAO.alarm(2, 2, targetToUsers);
 		
 	}

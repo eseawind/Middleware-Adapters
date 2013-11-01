@@ -52,22 +52,11 @@ public class StaffOutAlert extends AbstractAlert{
 				   smd.setCardID(tt.getTargetID());
 				   smd.setTime(tsToString(tt.getElTime()));
 				   staffAlertDAO.updateEnterLeaveInfo(smd);
-				   //TODO remove after test
-				   System.out.println("update enterleaveinfo of " + smd.getCardID());
 				   targetToUsers.put(tt.getTargetID(),tt.getUserID());
 			   }
 		   }
 		  
 	   }
-	   //TODO remove after test
-//	   Set<String> targets = targetToUsers.keySet();
-//	   Iterator<String> it1 = targets.iterator();
-//	   while(it1.hasNext()){
-//		   String target = it1.next();
-//		   int user = targetToUsers.get(target);
-//		   logger.info("[StaffOutAlert] user_id:" + user +
-//					"target_id:" + target);
-//	   }
 	   staffAlertDAO.alarm(2, 5, targetToUsers);
 
 	}

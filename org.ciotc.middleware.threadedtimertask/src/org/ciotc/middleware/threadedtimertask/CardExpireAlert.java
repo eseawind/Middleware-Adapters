@@ -44,15 +44,6 @@ public class CardExpireAlert extends AbstractAlert {
 				}
 			}
 		}
-		//TODO remove after test
-//		Set<String> targets = targetToUsers.keySet();
-//		Iterator<String> it2 = targets.iterator();
-//		while(it2.hasNext()){
-//			String target = it2.next();
-//			int user = targetToUsers.get(target);
-//			logger.info("[CardExpireAlert] user_id:" + user +
-//					"target_id:" + target);
-//		}
 		staffAlertDAO.alarm(2, 4, targetToUsers);
 	}
 

@@ -41,16 +41,7 @@ public class CardBatteryAlert extends AbstractAlert{
 				alertTargets.add(target);
 			}
 		}
-		//TODO remove after test
 		Map<String,Integer> targetToUser = staffAlertDAO.getTargetUserByTargetID(alertTargets);
-//		Set<String> users = targetToUser.keySet();
-//		Iterator<String> it1 = users.iterator();
-//		while(it1.hasNext()){
-//			String target = it1.next();
-//			int user = targetToUser.get(target);
-//			logger.info("[CardBatteryAlert] target_id:" + target +
-//					"user_id:" + user);	
-//		}
 		staffAlertDAO.alarm(2, 1, targetToUser);
 		
 	}
