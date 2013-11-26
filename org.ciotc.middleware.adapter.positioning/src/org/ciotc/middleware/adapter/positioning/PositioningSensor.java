@@ -26,7 +26,7 @@ import org.springframework.context.ApplicationContext;
 @JMXMBean
 public class PositioningSensor extends AbstractSensor<PositioningSensorSession> {
 	private Integer port = Integer.valueOf(5002);
-	private String host = "192.168.109.203";
+	private String host = "192.168.108.41";
 	private AtomicInteger sessionID = new AtomicInteger(0);
 	private String displayName = "PositioningSensor";
 	private AtomicBoolean destroyed = new AtomicBoolean(false);
@@ -121,7 +121,7 @@ public class PositioningSensor extends AbstractSensor<PositioningSensorSession> 
 	@Property(displayName = "Host",
 			description = "The host that the reader will listen for incoming connections from.",
 			writable = true,type = PropertyType.PT_STRING,category = "connection",
-			defaultValue = "192.168.109.203",
+			defaultValue = "192.168.108.41",
 			orderValue = 1.0F,maxValue = "",minValue = "")
 	public String getHost() {
 		return host;
