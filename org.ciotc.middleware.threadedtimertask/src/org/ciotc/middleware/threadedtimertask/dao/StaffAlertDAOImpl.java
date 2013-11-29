@@ -13,6 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -357,7 +359,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		Connection conn = this.getConnection();
 		try {
 			Statement stmt = conn.createStatement();
-			Statement stmti = conn.createStatement();
+			PreparedStatement stmti = null;
 			Statement stmtd = conn.createStatement();
 			ResultSet rs1 = stmt.executeQuery(
 					"SELECT target_id,eltype FROM t_enterleaveinfo WHERE target_id = \'" 
@@ -369,23 +371,23 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 					if(uto.getTargetID() == null){
 						throw new NullPointerException();
 					}
-					StringBuffer sql = new StringBuffer();
-					sql.append(
-						"INSERT INTO t_enterleaveinfo(user_id,organize_id,target_id,");
-					sql.append("target_code,validdate,distributestatue,distributetime,");
-					sql.append("recyclestatue,recycletime,eltype,eltime)VALUES( " );
-					sql.append(uto.getUserID()).append(",");
-					sql.append(uto.getOrganizeID()).append(",");
-					sql.append(uto.getTargetID()).append(",");
-					sql.append(uto.getTargetCode()).append(",");
-					sql.append(sT(uto.getValidDate())).append(",");
-					sql.append(uto.getDistributeStatus()).append(",");
-					sql.append(sT(uto.getDistributeTime())).append(",");
-					sql.append(uto.getRecycleStatus()).append(",");
-					sql.append(sT(uto.getRecycleTime())).append(",");
-					sql.append("1").append(",\'").append(smd.getTime());
-					sql.append("\')");
-					int status = stmti.executeUpdate(sql.toString());
+					String sql = "INSERT INTO t_enterleaveinfo(user_id,organize_id,target_id," +
+					     "target_code,validdate,distributestatue,distributetime," +
+					     "recyclestatue,recycletime,eltype,eltime)VALUES(?,?,?,?,?,?,?,?,?,?,?) ";
+					stmti = conn.prepareStatement(sql);
+					stmti.setInt(1, uto.getUserID());
+					stmti.setInt(2, uto.getOperaterID());
+					stmti.setString(3, uto.getTargetID());
+					stmti.setString(4, uto.getTargetCode());
+					stmti.setTimestamp(5, uto.getValidDate());
+					stmti.setInt(6, uto.getDistributeStatus());
+					stmti.setTimestamp(7, uto.getDistributeTime());
+					stmti.setInt(8, uto.getRecycleStatus());
+					stmti.setTimestamp(9, uto.getRecycleTime());
+					stmti.setInt(10,1);
+					stmti.setTimestamp(11,strToTimestamp(smd.getTime()));
+					stmti.execute();
+					int status = stmti.executeUpdate();
 					if(status == 1){
 						stmtd.executeUpdate(
 								"DELETE FROM t_lbstracedata WHERE target_id = \'" +
@@ -399,7 +401,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				}
 			}
 			closeStmt(stmt);
-			closeStmt(stmti);
+			stmti.close();
 			closeStmt(stmtd);
 		    close(conn);
 		} catch (SQLException e) {
@@ -413,23 +415,23 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		
 	}
 	/**
-	 * 将一个Timestamp对象格式化为 'yyyy-MM-dd HH:mm:ss',
-	 * 用于数据中数据的插入
-	 * 因为Timestamp自带方法均已被废弃
-	 * @param ts
-	 * @return
+	 * 将一个 'yyyy-MM-dd HH:mm:ss'转为Timestamp类型
 	 */
-	public String sT(Timestamp ts){
-		if(ts == null){
-			return null;
-		}
+	public Timestamp strToTimestamp(String str){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Calendar c = Calendar.getInstance();
-		c.setTimeInMillis(ts.getTime());
-		StringBuffer sb = new StringBuffer();
-		sb.append("\'").append(sdf.format(c.getTime())).append("\'");
-		return sb.toString();
+		Date d = null;
+		try {
+			d = sdf.parse(str);
+		} catch (ParseException e) {
+			logger.error("parse error while convert str to timestamp");
+			e.printStackTrace();
+		}
+		//DateFormat df = DateFormat.getInstance();
+		Timestamp ret = new Timestamp(d.getTime());
+		return ret;
+		
 	}
+	
 	/**
 	 * 将一个Timestamp对象格式化为 yyyy-MM-dd HH:mm:ss,
 	 * 因为Timestamp自带方法均已被废弃
