@@ -262,10 +262,36 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 			Map<String, Integer> targetToUsers) {
 		Set<String> users = targetToUsers.keySet();
 		Iterator<String> it2 = users.iterator();
+		Connection conn = null;
+		
+		Date date = new Date();
+		Timestamp eventTime = new Timestamp(date.getTime());
+		
 		while(it2.hasNext()){
 			String target = it2.next();
 			int user = targetToUsers.get(target);
-			this.insertEventLog(eventTypeID, subEventType, target, user);
+			try{
+				conn = this.dataSource.getConnection();
+				Statement statement = conn.createStatement();
+				String sql = "SELECT handlestatus FROM t_manageeventlog WHERE eventtype_id=" + eventTypeID 
+					+ " AND subevent_type=" + subEventType + " AND target_id='" + target + "' AND handlestatus=0";
+				ResultSet rs = statement.executeQuery(sql);
+				
+				if(!rs.next()) {
+					String insertSql = "INSERT INTO t_manageeventlog(event_time, eventtype_id, subevent_type, user_id, target_id) " +
+						"VALUES (?, ?, ?, ?, ?)";
+					PreparedStatement ps = conn.prepareStatement(insertSql);
+					ps.setTimestamp(1, eventTime);
+					ps.setInt(2, eventTypeID);
+					ps.setInt(3, subEventType);
+					ps.setInt(4, user);
+					ps.setString(5, target);
+					ps.executeUpdate();
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
+	
 		}
 		
 	}
@@ -307,8 +333,8 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		try {
 			Statement stmt = this.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(
-				"SELECT * FROM t_lbstracedata WHERE target_id " +
-				"IN ( SELECT target_id FROM t_lbsdata WHERE elflag = 1 AND " +
+				"SELECT * FROM t_lbstracedata WHERE area_id " +
+				"IN ( SELECT DISTINCT area_id FROM g_area WHERE " +
 				" antenna_id = " + antennaID + " )");
 			while(rs.next()){
 				TracingTargetDto tt = new TracingTargetDto();
@@ -368,13 +394,13 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				if(rs1.getInt("eltype") == 0){
 					String targetID = smd.getCardID();
 					UserTargetOrgnaizeDto uto = this.getUTOByTargetID(targetID);
-					if(uto.getTargetID() == null){
-						throw new NullPointerException();
-					}
 					String sql = "INSERT INTO t_enterleaveinfo(user_id,organize_id,target_id," +
 					     "target_code,validdate,distributestatue,distributetime," +
 					     "recyclestatue,recycletime,eltype,eltime)VALUES(?,?,?,?,?,?,?,?,?,?,?) ";
 					stmti = conn.prepareStatement(sql);
+					if(uto.getTargetID() == null){
+						throw new NullPointerException();
+					}
 					stmti.setInt(1, uto.getUserID());
 					stmti.setInt(2, uto.getOperaterID());
 					stmti.setString(3, uto.getTargetID());
@@ -386,22 +412,23 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 					stmti.setTimestamp(9, uto.getRecycleTime());
 					stmti.setInt(10,1);
 					stmti.setTimestamp(11,strToTimestamp(smd.getTime()));
-					stmti.execute();
 					int status = stmti.executeUpdate();
 					if(status == 1){
 						stmtd.executeUpdate(
 								"DELETE FROM t_lbstracedata WHERE target_id = \'" +
 	        	        smd.getCardID() +"\'");
 					}
-				}else{
-					  
-				    stmtd.executeUpdate(
-        			"DELETE FROM t_lbstracedata WHERE target_id = \'" +
-        	        smd.getCardID() +"\'");
+					stmti.close();
+					
 				}
+//				else{
+//					  
+//				    stmtd.executeUpdate(
+//        			"DELETE FROM t_lbstracedata WHERE target_id = \'" +
+//        	        smd.getCardID() +"\'");
+//				}
 			}
 			closeStmt(stmt);
-			stmti.close();
 			closeStmt(stmtd);
 		    close(conn);
 		} catch (SQLException e) {
@@ -410,6 +437,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		} catch (NullPointerException e){
 			logger.error("no related data in t_enterleaveinfo for target_id : " 
 						+ smd.getCardID());
+			e.printStackTrace();
 		}
 		
 		
