@@ -228,7 +228,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 			Statement stmt = this.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery(
 					"SELECT * FROM T_UserTargetOrgnaize" +
-					" Where target_id IN " +
+					" Where recyclestatue = 0 AND target_id IN " +
 				    "(SELECT DISTINCT target_id FROM T_LBSTraceData)");
 			while(rs.next()){
 				UserTargetOrgnaizeDto uto = new UserTargetOrgnaizeDto();

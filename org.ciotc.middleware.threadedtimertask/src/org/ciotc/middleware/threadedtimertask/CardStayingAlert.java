@@ -31,7 +31,7 @@ public class CardStayingAlert extends AbstractAlert {
 	public void runAlertJob() {
 		logger.info("CardStayingAlert job started...");
 		//超期停留时间单位为s
-		int interval = 30 * 60 * 1000;
+		int interval = 60 * 60 * 1000;
 		HashMap<String,Integer> targetToUsers = new HashMap<String,Integer>();
 		List<TracingTargetDto> tts = staffAlertDAO.getTracingTargetsByLBSTraceTable();
 		Iterator<TracingTargetDto> it = tts.iterator();
