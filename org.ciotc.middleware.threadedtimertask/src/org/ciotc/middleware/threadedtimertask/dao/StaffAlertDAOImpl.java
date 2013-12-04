@@ -43,13 +43,16 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	}
 	public Connection getConnection(){
 		Connection conn = null;
-		if(dataSource == null){
-			logger.error("dataSource can not be null");
-		}
+		
 		try {
-			 conn = dataSource.getConnection();
+			if(dataSource == null){
+				throw new NullPointerException();
+			}
+			conn = dataSource.getConnection();
 		} catch (SQLException e) {
 			logger.error("Can not get connection from dataSource");
+		} catch (NullPointerException e){
+			logger.error("dataSource can not be null");
 		}
 		return conn;
 	}
