@@ -256,7 +256,6 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 			Map<String, Integer> targetToUsers) {
 		Set<String> users = targetToUsers.keySet();
 		Iterator<String> it2 = users.iterator();
-		Connection conn = null;
 		
 		Date date = new Date();
 		Timestamp eventTime = new Timestamp(date.getTime());
@@ -265,8 +264,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 			String target = it2.next();
 			int user = targetToUsers.get(target);
 			try{
-				conn = this.dataSource.getConnection();
-				Statement statement = conn.createStatement();
+				Statement statement = sconn.createStatement();
 				String sql = "SELECT handlestatus FROM t_manageeventlog WHERE eventtype_id=" + eventTypeID 
 					+ " AND subevent_type=" + subEventType + " AND target_id='" + target + "' AND handlestatus=0";
 				ResultSet rs = statement.executeQuery(sql);
@@ -274,7 +272,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				if(!rs.next()) {
 					String insertSql = "INSERT INTO t_manageeventlog(event_time, eventtype_id, subevent_type, user_id, target_id) " +
 						"VALUES (?, ?, ?, ?, ?)";
-					PreparedStatement ps = conn.prepareStatement(insertSql);
+					PreparedStatement ps = sconn.prepareStatement(insertSql);
 					ps.setTimestamp(1, eventTime);
 					ps.setInt(2, eventTypeID);
 					ps.setInt(3, subEventType);
