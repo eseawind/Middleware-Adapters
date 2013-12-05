@@ -41,6 +41,8 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	private static Connection sconn;
 	public void setDataSource(SimpleDriverDataSource sdds){
 		this.dataSource = sdds;
+	}
+	public void init(){
 		try {
 			if(dataSource == null){
 				throw new NullPointerException();
@@ -52,11 +54,11 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 			logger.error("dataSource can not be null");
 		}
 	}
-	public void close(Connection conn){
+	public void close(){
 		try {
-			if (conn != null) {
-				conn.close();
-				conn = null;
+			if (sconn != null) {
+				sconn.close();
+				sconn = null;
 			}
 		} catch (SQLException e) {
 			logger.error("close SQLException!");

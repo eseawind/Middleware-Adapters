@@ -23,7 +23,8 @@
 		<property name="username" value="${org.ciotc.middleware.jdbc.user}" />
 		<property name="password" value="${org.ciotc.middleware.jdbc.pass}" />
 	</bean>
-	<bean id="staffAlertDAOImpl" class="org.ciotc.middleware.threadedtimertask.dao.StaffAlertDAOImpl">
+	<bean id="staffAlertDAOImpl" class="org.ciotc.middleware.threadedtimertask.dao.StaffAlertDAOImpl"
+	  init-method="init" destroy-method="close">
 		<property name="dataSource" ref="datasource" />
 	</bean>
     
