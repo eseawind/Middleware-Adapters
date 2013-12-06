@@ -34,5 +34,8 @@ public interface StaffAlertDAO {
 	public void updateEnterLeaveInfo(StaffMessageDto smd);
 	public UserTargetOrgnaizeDto getUTOByTargetID(String targetID);
 	public List<UserTargetOrgnaizeDto> getUTOByTargetIDs(List<String> targetIDs);
+	public List<String> getAntennaIDsByDevice(int deviceType);
+	public List<TracingTargetDto> getLeavingTracingTargetByAntennaIDs(
+			List<String> antennaIDs);
 	
 }

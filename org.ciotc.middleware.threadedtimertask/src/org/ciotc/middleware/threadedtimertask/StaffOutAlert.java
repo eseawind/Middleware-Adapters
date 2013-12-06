@@ -37,10 +37,10 @@ public class StaffOutAlert extends AbstractAlert{
 	public void runAlertJob() {
 		logger.info("StaffOutAlert started...");
 	   //获取大楼出口的天线id
-	   String antennaID = staffAlertDAO.getAntennaIDByDevice(2);
+	   List<String> antennaIDs = staffAlertDAO.getAntennaIDsByDevice(2);
 	   HashMap<String,Integer> targetToUsers = new HashMap<String,Integer>();
 	   List<TracingTargetDto> tts = 
-			   staffAlertDAO.getLeavingTracingTargetByAntennaID(antennaID);
+			   staffAlertDAO.getLeavingTracingTargetByAntennaIDs(antennaIDs);
 	   Iterator<TracingTargetDto> it = tts.iterator();
 	   while(it.hasNext()){
 		   TracingTargetDto tt = it.next();

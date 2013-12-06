@@ -347,6 +347,41 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		return tts;
 	}
 	/**
+	 * 根据antenna_id 和进去标志elflag查询当前定位对象中在要离开的定位对象
+	 */
+	@Override
+	public List<TracingTargetDto> getLeavingTracingTargetByAntennaIDs(
+			List<String> antennaIDs) {
+		List<TracingTargetDto> tts = new ArrayList<TracingTargetDto>();
+		
+		try {
+			
+			Iterator<String> it = antennaIDs.iterator();
+			while(it.hasNext()){
+				Statement stmt = sconn.createStatement();
+				ResultSet rs = stmt.executeQuery(
+				"SELECT * FROM t_lbstracedata WHERE area_id " +
+				"IN ( SELECT DISTINCT area_id FROM g_area WHERE " +
+				" antenna_id = " + it.next() + " )");
+				while(rs.next()){
+					TracingTargetDto tt = new TracingTargetDto();
+					tt.setAreaID(rs.getInt("area_id"));
+					tt.setElFlag(rs.getInt("elflag"));
+					tt.setElTime(rs.getTimestamp("eltime"));
+					tt.setTargetID(rs.getString("target_id"));
+					tt.setUserID(rs.getInt("user_id"));
+					tts.add(tt);
+				}
+				closeStmt(stmt);
+			}
+			
+		} catch (SQLException e) {
+			logger.error("error occured when executing sql");
+			e.printStackTrace();
+		}
+		return tts;
+	}
+	/**
 	 * 根据设备类型从表t_antenna中获取antenna_id
 	 */
 	@Override
@@ -368,6 +403,30 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		}
 		
 		return antenna;
+	}
+	/**
+	 * 根据设备类型从表t_antenna中获取antenna_id
+	 */
+	@Override
+	public List<String> getAntennaIDsByDevice(int deviceType) {
+		String antenna = null;
+		List<String> antennas = new ArrayList<String>();
+		try {
+			Statement stmt = sconn.createStatement();
+			ResultSet rs = stmt.executeQuery(
+				"SELECT antenna_id FROM t_antenna WHERE devicetype_id = " 
+						+ deviceType);
+			while(rs.next()){
+				antenna = rs.getString(1);
+				antennas.add(antenna);
+			}
+			closeStmt(stmt);
+		} catch (SQLException e) {
+			logger.error("error occured when executing sql");
+			e.printStackTrace();
+		}
+		
+		return antennas;
 	}
 	/**
 	 * 当检测到有人员离开通讯基站可以覆盖的范围时，更新
