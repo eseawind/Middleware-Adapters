@@ -8,6 +8,8 @@
 package org.ciotc.middleware.adapter.positioning;
 
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,6 +47,31 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 	}
 
 	@Override
+	public void sessionCreated(IoSession session) throws Exception {
+		// TODO Auto-generated method stub
+		super.sessionCreated(session);
+	}
+
+	@Override
+	public void sessionOpened(IoSession session) throws Exception {
+		// TODO Auto-generated method stub
+		final IoSession s  = session;
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(
+		new TimerTask(){
+
+			@Override
+			public void run() {
+				//定时发送心跳包维持连接
+				IoBuffer resp = IoBuffer.wrap(GwMessage.makeHeartBeat());
+				s.write(resp);
+			}
+			
+		},0,2000);
+		
+	}
+
+	@Override
 	public void messageReceived(IoSession session, Object message)
 			throws Exception {
 		IoBuffer ib = (IoBuffer)message;
@@ -73,8 +100,8 @@ public class MinaTCPHandler extends IoHandlerAdapter{
 							+ ";Receive timestamp:" + new Date());
 					sensor.sendEvent(smd);
 					//发送心跳包维持连接
-					IoBuffer resp = IoBuffer.wrap(GwMessage.makeHeartBeat());
-					session.write(resp);
+					//IoBuffer resp = IoBuffer.wrap(GwMessage.makeHeartBeat());
+					//session.write(resp);
 					//logger.info("response heartbeat packet send.");
 				} else {
 					//logger.info("heartbeat packet received: " + sb.toString());

@@ -75,6 +75,16 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 			}
 		}
 	}
+	private void refreshConn(){
+		try {
+			if(sconn.isClosed()){
+				sconn = dataSource.getConnection();
+			}
+		} catch (SQLException e) {
+			logger.error("Error occured when reconnected to database");
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * 向t_manageeventlog表中插入告警事件，如果已经被处理则取消插入。
 	 */
@@ -84,6 +94,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Timestamp eventTime = Timestamp.valueOf(sdf.format(new Date()));
 		try {
+			refreshConn();
 			Statement statement = sconn.createStatement();
 			String sql = 
 					"SELECT handlestatus FROM t_manageeventlog WHERE eventtype_id=" 
@@ -96,6 +107,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 						"INSERT INTO t_manageeventlog(event_time, "
 						+ "eventtype_id, subevent_type, target_id, user_id) " 
 						+ "VALUES (?, ?, ?, ?, ?)";
+				refreshConn();
 				PreparedStatement ps = sconn.prepareStatement(insertSql);
 				ps.setTimestamp(1, eventTime);
 				ps.setInt(2, eventTypeID);
@@ -123,6 +135,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		List<String> targets = new ArrayList<String>();
 		
 		try {
+			refreshConn();
 			Statement stmt = sconn.createStatement();
 			ResultSet rs = stmt.executeQuery(
 					"SELECT target_id FROM t_lbstracedata");
@@ -147,6 +160,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		while(it.hasNext()){
 			String target = it.next();
 			try {
+				refreshConn();
 				Statement stmt = sconn.createStatement();
 				ResultSet rs = stmt.executeQuery(
 						"SELECT target_id,user_id FROM T_UserTargetOrgnaize " +
@@ -169,6 +183,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	public int getBatteryLifeByID(String battery) {
 		int avgtime = -1;
 		try {
+			refreshConn();
 			Statement stmt = sconn.createStatement();
 			ResultSet rs = stmt.executeQuery(
 					"SELECT avgtime FROM t_battery WHERE battery_id = \'"
@@ -191,6 +206,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		List<TargetInfoDto> targets = new ArrayList<TargetInfoDto>();
 		
 		try {
+			refreshConn();
 			Statement stmt = sconn.createStatement();
 			ResultSet rs = stmt.executeQuery(
 					"SELECT * FROM t_target WHERE target_id "+
@@ -221,6 +237,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				new ArrayList<UserTargetOrgnaizeDto>();
 	
 		try {
+			refreshConn();
 			Statement stmt = sconn.createStatement();
 			ResultSet rs = stmt.executeQuery(
 					"SELECT * FROM T_UserTargetOrgnaize" +
@@ -266,6 +283,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 			String target = it2.next();
 			int user = targetToUsers.get(target);
 			try{
+				refreshConn();
 				Statement statement = sconn.createStatement();
 				String sql = "SELECT handlestatus FROM t_manageeventlog WHERE eventtype_id=" + eventTypeID 
 					+ " AND subevent_type=" + subEventType + " AND target_id='" + target + "' AND handlestatus=0";
@@ -274,6 +292,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				if(!rs.next()) {
 					String insertSql = "INSERT INTO t_manageeventlog(event_time, eventtype_id, subevent_type, user_id, target_id) " +
 						"VALUES (?, ?, ?, ?, ?)";
+					refreshConn();
 					PreparedStatement ps = sconn.prepareStatement(insertSql);
 					ps.setTimestamp(1, eventTime);
 					ps.setInt(2, eventTypeID);
@@ -297,6 +316,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		List<TracingTargetDto> tts = new ArrayList<TracingTargetDto>();
 	
 		try {
+			refreshConn();
 			Statement stmt = sconn.createStatement();
 			ResultSet rs = stmt.executeQuery(
 				"SELECT * FROM t_lbstracedata");
@@ -325,6 +345,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		List<TracingTargetDto> tts = new ArrayList<TracingTargetDto>();
 		
 		try {
+			refreshConn();
 			Statement stmt = sconn.createStatement();
 			ResultSet rs = stmt.executeQuery(
 				"SELECT * FROM t_lbstracedata WHERE area_id " +
@@ -358,6 +379,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 			
 			Iterator<String> it = antennaIDs.iterator();
 			while(it.hasNext()){
+				refreshConn();
 				Statement stmt = sconn.createStatement();
 				ResultSet rs = stmt.executeQuery(
 				"SELECT * FROM t_lbstracedata WHERE area_id " +
@@ -389,6 +411,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		String antenna = null;
 		
 		try {
+			refreshConn();
 			Statement stmt = sconn.createStatement();
 			ResultSet rs = stmt.executeQuery(
 				"SELECT antenna_id FROM t_antenna WHERE devicetype_id = " 
@@ -412,6 +435,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 		String antenna = null;
 		List<String> antennas = new ArrayList<String>();
 		try {
+			refreshConn();
 			Statement stmt = sconn.createStatement();
 			ResultSet rs = stmt.executeQuery(
 				"SELECT antenna_id FROM t_antenna WHERE devicetype_id = " 
@@ -436,8 +460,10 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	@Override
 	public void updateEnterLeaveInfo(StaffMessageDto smd) {
 		try {
+			refreshConn();
 			Statement stmt = sconn.createStatement();
 			PreparedStatement stmti = null;
+			refreshConn();
 			Statement stmtd = sconn.createStatement();
 			ResultSet rs1 = stmt.executeQuery(
 					"SELECT target_id,eltype FROM t_enterleaveinfo WHERE target_id = \'" 
@@ -449,6 +475,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 					String sql = "INSERT INTO t_enterleaveinfo(user_id,organize_id,target_id," +
 					     "target_code,validdate,distributestatue,distributetime," +
 					     "recyclestatue,recycletime,eltype,eltime)VALUES(?,?,?,?,?,?,?,?,?,?,?) ";
+					refreshConn();
 					stmti = sconn.prepareStatement(sql);
 					if(uto.getTargetID() == null){
 						throw new NullPointerException();
@@ -529,6 +556,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 	public UserTargetOrgnaizeDto getUTOByTargetID(String targetID) {
 		UserTargetOrgnaizeDto uto = new UserTargetOrgnaizeDto();
 		try {
+			refreshConn();
 			 Statement stmt = sconn.createStatement();
 				ResultSet rs = stmt.executeQuery(
 						"SELECT * FROM T_UserTargetOrgnaize" +
@@ -564,6 +592,7 @@ public class StaffAlertDAOImpl implements StaffAlertDAO{
 				new ArrayList<UserTargetOrgnaizeDto>();
 		Iterator<String> it = targetIDs.iterator();
 		try {
+			refreshConn();
 			PreparedStatement ps = sconn.prepareStatement(
 					"SELECT * FROM T_UserTargetOrgnaize" +
 					" Where target_id = ? ");

@@ -47,7 +47,7 @@ public class StaffOutAlert extends AbstractAlert{
 		   if(tt.getTargetID() != null){
 			   Timestamp ts = tt.getElTime();
 			   //t_lbstracedata 中5分钟内没有更新，则认为已经离开
-			   if(System.currentTimeMillis() - ts.getTime() > 5 * 60 * 1000){
+			   if(System.currentTimeMillis() - ts.getTime() > 30 * 1000){
 				   StaffMessageDto smd = new StaffMessageDto();
 				   smd.setCardID(tt.getTargetID());
 				   smd.setTime(tsToString(tt.getElTime()));
